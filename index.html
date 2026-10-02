@@ -1,0 +1,1059 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Charleston on Spotify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f6f0e4;
+    --paper-2: #efe6d4;
+    --paper-3: #e5d9c2;
+    --ink: #1e2a26;
+    --ink-2: #4b5751;
+    --ink-3: #7b8179;
+    --rule: #dbcfb8;
+    --palmetto: #2d5a4b;
+    --on-palmetto: #f6f0e4;
+
+    /* Rainbow Row */
+    --pink: #ecbcb8;
+    --butter: #f2d88c;
+    --mint: #b7d9c2;
+    --sky: #b6cfe4;
+    --lilac: #cfc2e2;
+    --coral: #efab8f;
+    --sand: #e8d2ae;
+    --window: #f8f3e9;
+    --window-lit: #fbecc0;
+    --cornice: rgba(30, 42, 38, 0.14);
+    --door: #34443e;
+
+    --linked-bg: #d3e8d9;
+    --linked-fg: #1f4a3b;
+    --name-bg: #f7e6ae;
+    --name-fg: #634c0c;
+    --error-fg: #9a3f22;
+
+    --shadow: 0 1px 0 rgba(30, 42, 38, 0.04), 0 18px 40px -24px rgba(30, 42, 38, 0.45);
+    --display: "Gloock", "Iowan Old Style", Georgia, serif;
+    --body: "Hanken Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+    --gutter: clamp(16px, 4vw, 44px);
+    --toolbar-h: 64px;
+    color-scheme: light;
+  }
+
+  /* Charleston at night: dark harbor, lamplit windows. */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #11181b;
+      --paper-2: #172024;
+      --paper-3: #1f2a2f;
+      --ink: #efe7d6;
+      --ink-2: #bdb6a6;
+      --ink-3: #8a8c84;
+      --rule: #29353a;
+      --palmetto: #8fc3a8;
+      --on-palmetto: #0f1a16;
+
+      --pink: #6e4a4f;
+      --butter: #75653c;
+      --mint: #3f5f51;
+      --sky: #3e566c;
+      --lilac: #54496a;
+      --coral: #74493b;
+      --sand: #665641;
+      --window: #222d33;
+      --window-lit: #f3d283;
+      --cornice: rgba(0, 0, 0, 0.3);
+      --door: #0b1012;
+
+      --linked-bg: rgba(143, 195, 168, 0.15);
+      --linked-fg: #a7d5bc;
+      --name-bg: rgba(242, 216, 140, 0.13);
+      --name-fg: #efd28a;
+      --error-fg: #f0a48a;
+
+      --shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 18px 40px -20px rgba(0, 0, 0, 0.7);
+      color-scheme: dark;
+    }
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 15px/1.5 var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* paper grain */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  @media (prefers-color-scheme: dark) {
+    body::before { mix-blend-mode: screen; opacity: 0.035; }
+  }
+
+  button, input, select { font: inherit; color: inherit; }
+  a { color: inherit; }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    position: relative;
+    background: linear-gradient(to bottom, var(--paper-2), var(--paper) 85%);
+    border-bottom: 3px solid var(--ink);
+    overflow: hidden;
+  }
+  .mast-grid {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: clamp(28px, 5vw, 56px) var(--gutter) 28px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 28px 48px;
+    align-items: end;
+  }
+  .kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font: 700 0.72rem/1 var(--body);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--palmetto);
+  }
+  .kicker::before { content: ""; width: 28px; height: 2px; background: currentColor; }
+  h1 {
+    margin: 16px 0 0;
+    font: 400 clamp(3.1rem, 10vw, 7.6rem)/0.86 var(--display);
+    letter-spacing: -0.025em;
+  }
+  h1 small {
+    display: block;
+    margin-top: 14px;
+    font: 500 clamp(1.05rem, 2.3vw, 1.55rem)/1.2 var(--body);
+    letter-spacing: 0.01em;
+    color: var(--ink-2);
+  }
+  .dek { max-width: 54ch; margin: 14px 0 0; color: var(--ink-2); }
+
+  .ledger { display: grid; gap: 16px; justify-items: end; min-width: 300px; }
+  .stats { display: flex; gap: 28px; margin: 0; }
+  .stats div { text-align: right; }
+  .stats dt {
+    font: 700 0.68rem/1 var(--body);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .stats dd {
+    margin: 6px 0 0;
+    font: 400 2.1rem/1 var(--display);
+    font-variant-numeric: tabular-nums;
+  }
+  .stats dd.when { font: 600 1rem/2.1rem var(--body); color: var(--ink-2); }
+
+  .refresh {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .refresh:hover:not(:disabled) { background: var(--palmetto); color: var(--on-palmetto); }
+  .refresh:active:not(:disabled) { transform: translateY(1px); }
+  .refresh[hidden] { display: none; }
+  .refresh:disabled { opacity: 0.55; cursor: not-allowed; }
+  .refresh:focus-visible { outline: 2px solid var(--palmetto); outline-offset: 3px; }
+  .refresh svg { width: 16px; height: 16px; }
+  .refresh.busy svg { animation: spin 1s linear infinite; }
+
+  .progress { width: 100%; display: grid; gap: 6px; font-size: 0.82rem; color: var(--ink-2); text-align: right; }
+  .progress[hidden] { display: none; }
+  .track { height: 4px; border-radius: 4px; background: var(--paper-3); overflow: hidden; }
+  .track span {
+    display: block; height: 100%; width: 0;
+    background: var(--palmetto);
+    transition: width 0.3s ease;
+  }
+  .track.indeterminate span { width: 35%; animation: slide 1.2s ease-in-out infinite; }
+
+  .notice {
+    max-width: 380px;
+    margin: 0;
+    padding: 10px 14px;
+    border-left: 3px solid var(--coral);
+    background: var(--paper-2);
+    font-size: 0.85rem;
+    color: var(--ink-2);
+    text-align: left;
+  }
+  .notice[hidden] { display: none; }
+  .notice code { font-size: 0.8rem; }
+
+  .skyline { display: block; width: 100%; height: 118px; margin-top: -8px; }
+  .skyline g { animation: rise 0.9s cubic-bezier(0.2, 0.75, 0.2, 1) both; }
+  .skyline .cornice { fill: var(--cornice); }
+  .skyline .window { fill: var(--window); }
+  .skyline .window.lit { fill: var(--window-lit); }
+  .skyline .door { fill: var(--door); }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .toolbar-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 12px var(--gutter);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+  }
+  .search { position: relative; flex: 1 1 240px; max-width: 420px; }
+  .search svg {
+    position: absolute; left: 12px; top: 50%; translate: 0 -50%;
+    width: 16px; height: 16px; color: var(--ink-3); pointer-events: none;
+  }
+  .search kbd {
+    position: absolute; right: 10px; top: 50%; translate: 0 -50%;
+    padding: 1px 7px; border: 1px solid var(--rule); border-radius: 4px;
+    font: 600 0.72rem/1.4 var(--body); color: var(--ink-3);
+  }
+  .field {
+    height: 40px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--paper);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .field:focus { outline: none; border-color: var(--palmetto); box-shadow: 0 0 0 3px color-mix(in srgb, var(--palmetto) 22%, transparent); }
+  .search input { width: 100%; padding: 0 40px 0 36px; }
+  .search input::placeholder { color: var(--ink-3); }
+  select.field { padding: 0 30px 0 12px; }
+
+  .segmented {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--paper-2);
+  }
+  .segmented button {
+    height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--ink-2);
+    font-size: 0.86rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .segmented button:hover { color: var(--ink); }
+  .segmented button[aria-pressed="true"] {
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+  .segmented button:focus-visible { outline: 2px solid var(--palmetto); outline-offset: -2px; }
+  .count { margin-left: auto; font-size: 0.85rem; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+  /* ---------- Directory ---------- */
+  .layout {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 var(--gutter) 72px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 36px;
+    align-items: start;
+  }
+  .directory { min-width: 0; padding-top: 8px; }
+
+  .cols, .row {
+    display: grid;
+    grid-template-columns: 50px minmax(0, 1fr) 84px 112px 132px;
+    grid-template-areas: "avatar main followers pop match";
+    column-gap: 18px;
+    align-items: center;
+  }
+  .cols {
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .cols > * { font: 700 0.68rem/1 var(--body); letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-3); }
+  .cols .c-main { grid-row: 1; grid-column: avatar-start / main-end; }
+  .cols .c-followers { grid-area: followers; justify-self: end; }
+  .cols .c-pop { grid-area: pop; }
+  .cols .c-match { grid-area: match; }
+  .sort {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .sort:hover, .sort.active { color: var(--ink); }
+  .sort:focus-visible { outline: 2px solid var(--palmetto); outline-offset: 3px; border-radius: 2px; }
+  .sort .arrow { font-size: 0.7rem; opacity: 0; }
+  .c-followers .sort { flex-direction: row-reverse; }
+  .sort.active .arrow { opacity: 1; }
+
+  .row {
+    width: 100%;
+    padding: 12px;
+    border: 0;
+    border-bottom: 1px solid var(--rule);
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s ease;
+  }
+  .row:hover { background: var(--paper-2); }
+  .row[aria-current="true"] { background: var(--paper-2); box-shadow: inset 3px 0 0 var(--palmetto); }
+  .row:focus-visible { outline: 2px solid var(--palmetto); outline-offset: -2px; }
+  .intro .row { animation: fade-up 0.45s ease both; animation-delay: calc(var(--i) * 22ms + 250ms); }
+
+  /* Arched-window frame, after the doorways on Church Street. */
+  .arch {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 50% 50% 4px 4px / 38% 38% 4px 4px;
+    background: var(--tint, var(--sand));
+    color: var(--ink);
+    font-family: var(--display);
+  }
+  .arch img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .row .arch { grid-area: avatar; width: 50px; height: 58px; font-size: 1.35rem; }
+  .row:is(.m-none, .m-error) .arch { filter: grayscale(0.6); opacity: 0.75; }
+
+  .main { grid-area: main; min-width: 0; display: grid; gap: 2px; }
+  .name {
+    font: 400 1.22rem/1.2 var(--display);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .row:is(.m-none, .m-error) .name { color: var(--ink-2); }
+  .meta, .genres { font-size: 0.82rem; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .genres { color: var(--ink-2); font-style: italic; }
+
+  .followers { grid-area: followers; justify-self: end; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .followers.no-data { color: var(--ink-3); font-weight: 400; }
+  .pop { grid-area: pop; display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .pop .track { flex: 0 0 64px; }
+  .pop .track span { transition: none; }
+
+  .row .badge { grid-area: match; }
+  .badge {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font: 700 0.66rem/1.2 var(--body);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .badge.m-linked { background: var(--linked-bg); color: var(--linked-fg); }
+  .badge.m-name { background: var(--name-bg); color: var(--name-fg); }
+  .badge.m-none { color: var(--ink-3); box-shadow: inset 0 0 0 1px var(--rule); }
+  .badge.m-error { color: var(--error-fg); box-shadow: inset 0 0 0 1px currentColor; }
+
+  .empty {
+    padding: 56px 12px;
+    text-align: center;
+    color: var(--ink-2);
+  }
+  .empty h2 { margin: 0 0 8px; font: 400 1.7rem/1.2 var(--display); color: var(--ink); }
+  .empty p { max-width: 46ch; margin: 0 auto 18px; }
+  .empty code { font-size: 0.85em; }
+  .link-button {
+    border: 0; background: none; padding: 0;
+    color: var(--palmetto); font-weight: 600; text-decoration: underline; text-underline-offset: 3px;
+    cursor: pointer;
+  }
+
+  /* ---------- Detail panel ---------- */
+  .panel {
+    position: sticky;
+    top: calc(var(--toolbar-h) + 20px);
+    margin-top: 20px;
+    max-height: calc(100vh - var(--toolbar-h) - 40px);
+    overflow: auto;
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    background: var(--paper-2);
+    box-shadow: var(--shadow);
+    overscroll-behavior: contain;
+  }
+  .panel-inner { padding: 22px; display: grid; gap: 16px; }
+  .panel .arch.hero { width: 100%; aspect-ratio: 1; font-size: 4.5rem; border-radius: 50% 50% 8px 8px / 32% 32% 8px 8px; }
+  .panel .arch.hero:not(:has(img)) { width: 46%; justify-self: center; }
+  .panel-head { display: grid; gap: 8px; }
+  .panel-head h2 { margin: 0; font: 400 2.1rem/1.05 var(--display); letter-spacing: -0.01em; overflow-wrap: anywhere; }
+  .panel-head .dis { margin: 0; color: var(--ink-3); font-style: italic; }
+  .close {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    width: 34px; height: 34px;
+    display: grid; place-items: center;
+    border: 1px solid var(--rule); border-radius: 50%;
+    background: var(--paper); color: var(--ink-2);
+    cursor: pointer;
+  }
+  .close:hover { color: var(--ink); }
+  .close:focus-visible { outline: 2px solid var(--palmetto); outline-offset: 2px; }
+  .close svg { width: 14px; height: 14px; }
+
+  .facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 16px;
+    margin: 0;
+    padding: 14px 0;
+    border-block: 1px solid var(--rule);
+  }
+  .facts dt { font: 700 0.64rem/1 var(--body); letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-3); }
+  .facts dd { margin: 5px 0 0; font-weight: 500; overflow-wrap: anywhere; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { padding: 3px 10px; border-radius: 999px; background: var(--paper-3); font-size: 0.8rem; color: var(--ink-2); }
+  .callout {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: var(--name-bg);
+    color: var(--name-fg);
+    font-size: 0.86rem;
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    height: 40px; padding: 0 16px;
+    border-radius: 999px;
+    font-weight: 600; font-size: 0.9rem; text-decoration: none;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .btn.primary { background: var(--palmetto); border-color: var(--palmetto); color: var(--on-palmetto); }
+  .btn:hover { filter: brightness(1.06); }
+  .btn:focus-visible { outline: 2px solid var(--palmetto); outline-offset: 2px; }
+  .btn svg { width: 15px; height: 15px; }
+  .embed { width: 100%; height: 352px; border: 0; border-radius: 12px; background: var(--paper-3); }
+
+  .placeholder { padding: 40px 28px; text-align: center; color: var(--ink-2); }
+  .placeholder svg { width: 120px; height: auto; margin: 0 auto 18px; display: block; }
+  .placeholder h2 { margin: 0 0 6px; font: 400 1.5rem/1.2 var(--display); color: var(--ink); }
+  .placeholder p { margin: 0; font-size: 0.9rem; }
+  .backdrop { display: none; }
+
+  /* ---------- Motion ---------- */
+  @keyframes rise { from { transform: translateY(120px); } to { transform: none; } }
+  @keyframes fade-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(290%); } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1100px) {
+    .layout { grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; }
+    .cols, .row { grid-template-columns: 50px minmax(0, 1fr) 76px 120px; grid-template-areas: "avatar main followers match"; }
+    .pop, .cols .c-pop { display: none; }
+  }
+  @media (max-width: 900px) {
+    .mast-grid { grid-template-columns: 1fr; }
+    .ledger { justify-items: start; min-width: 0; }
+    .stats div { text-align: left; }
+    .progress { text-align: left; }
+    .layout { grid-template-columns: minmax(0, 1fr); }
+    .panel {
+      position: fixed;
+      inset: auto 0 0 0;
+      top: auto;
+      z-index: 30;
+      margin: 0;
+      max-height: 88vh;
+      border-radius: 18px 18px 0 0;
+      border-bottom: 0;
+      transform: translateY(105%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.75, 0.2, 1);
+    }
+    .panel-open .panel { transform: none; }
+    .panel .arch.hero { width: 52%; justify-self: center; }
+    .backdrop {
+      display: block;
+      position: fixed; inset: 0; z-index: 25;
+      background: rgba(10, 16, 14, 0.45);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .panel-open .backdrop { opacity: 1; pointer-events: auto; }
+    .panel .placeholder-wrap { display: none; }
+  }
+  @media (max-width: 640px) {
+    .stats { gap: 20px; }
+    .stats dd { font-size: 1.7rem; }
+    .search { max-width: none; flex-basis: 100%; }
+    .search kbd { display: none; }
+    .segmented { order: 3; width: 100%; overflow-x: auto; }
+    .segmented button { flex: 1 0 auto; }
+    .count { margin-left: 0; }
+    .cols, .row {
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      grid-template-areas: "avatar main followers" "avatar match match";
+      row-gap: 6px;
+      column-gap: 14px;
+    }
+    .cols { grid-template-areas: "avatar main followers"; }
+    .cols .c-match { display: none; }
+    .row .arch { width: 44px; height: 52px; font-size: 1.15rem; }
+    .row { padding: 12px 4px; }
+  }
+</style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="mast-grid">
+      <div>
+        <p class="kicker">A Lowcountry music directory</p>
+        <h1>Charleston<small>artists on Spotify</small></h1>
+        <p class="dek">Musicians based, born, or formed in Charleston, SC. Found through MusicBrainz, matched on Spotify.</p>
+      </div>
+      <div class="ledger">
+        <dl class="stats">
+          <div><dt>Artists</dt><dd id="stat-total">—</dd></div>
+          <div><dt>On Spotify</dt><dd id="stat-spotify">—</dd></div>
+          <div><dt>Refreshed</dt><dd class="when" id="stat-updated">never</dd></div>
+        </dl>
+        <button class="refresh" id="refresh" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 4v5h-5"/></svg>
+          <span>Refresh data</span>
+        </button>
+        <div class="progress" id="progress" hidden>
+          <span id="progress-text"></span>
+          <div class="track" id="progress-track"><span id="progress-bar"></span></div>
+        </div>
+        <p class="notice" id="notice" role="status" hidden></p>
+      </div>
+    </div>
+    <svg class="skyline" id="skyline" viewBox="0 0 2400 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"></svg>
+  </header>
+
+  <div class="toolbar" id="toolbar">
+    <div class="toolbar-inner">
+      <label class="search">
+        <span class="visually-hidden">Search artists</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="field" id="search" type="search" placeholder="Search names, genres, places" autocomplete="off">
+        <kbd>/</kbd>
+      </label>
+      <div class="segmented" id="match-filter" role="group" aria-label="Spotify match">
+        <button type="button" data-match="all" aria-pressed="true">All</button>
+        <button type="button" data-match="mb-link" aria-pressed="false">Linked</button>
+        <button type="button" data-match="name-search" aria-pressed="false">Name match</button>
+        <button type="button" data-match="none" aria-pressed="false">Not on Spotify</button>
+      </div>
+      <label>
+        <span class="visually-hidden">Artist type</span>
+        <select class="field" id="type-filter"><option value="all">All types</option></select>
+      </label>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <main class="layout">
+    <section class="directory" aria-label="Artists">
+      <div class="cols" id="cols">
+        <span class="c-main"><button class="sort" type="button" data-sort="name">Artist <span class="arrow"></span></button></span>
+        <span class="c-followers"><button class="sort" type="button" data-sort="followers">Followers <span class="arrow"></span></button></span>
+        <span class="c-pop"><button class="sort" type="button" data-sort="popularity">Popularity <span class="arrow"></span></button></span>
+        <span class="c-match"><button class="sort" type="button" data-sort="match">Match <span class="arrow"></span></button></span>
+      </div>
+      <div id="list" class="intro"></div>
+    </section>
+    <aside class="panel" id="panel" aria-label="Artist details"></aside>
+  </main>
+  <div class="backdrop" id="backdrop"></div>
+
+<script>window.STATIC_DATA = {"static": true, "artists": [{"name": "Darius Rucker", "spotify_url": "https://open.spotify.com/artist/7FY5V3XMwlNBPitEjXowHQ", "spotify_id": "7FY5V3XMwlNBPitEjXowHQ", "spotify_name": "Darius Rucker", "followers": 2981008, "popularity": 70, "genres": "country", "image_url": "https://i.scdn.co/image/ab67616100005174da7f99db2b58172b7c64bbc8", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1966-05-13", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/3ae70f76-ea53-4cc5-906e-d47a384202a1"}, {"name": "Chandler Moore", "spotify_url": "https://open.spotify.com/artist/6y7frW1RUq3XBBXbYowVpk", "spotify_id": "6y7frW1RUq3XBBXbYowVpk", "spotify_name": "Chandler Moore", "followers": 911244, "popularity": 72, "genres": "worship; gospel; christian", "image_url": "https://i.scdn.co/image/ab6761610000517463cd243cac2ac59a0ef4e140", "match": "mb-link", "type": "Person", "area": "Atlanta", "begin_area": "Charleston", "begin_date": "1995-03-21", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/8c53db5e-72b9-468b-9b86-371c64376d66"}, {"name": "Shovels & Rope", "spotify_url": "https://open.spotify.com/artist/1M3BVQ36cqPQix8lQNCh4K", "spotify_id": "1M3BVQ36cqPQix8lQNCh4K", "spotify_name": "Shovels & Rope", "followers": 194557, "popularity": 47, "genres": "americana; alt country; bluegrass; southern gothic", "image_url": "https://i.scdn.co/image/ab676161000051742783a24f479c76ac6c1f9ea8", "match": "mb-link", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2008", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/7f426331-11c0-4c66-aec1-719abe5dd86f"}, {"name": "Trim", "spotify_url": "https://open.spotify.com/artist/1xkEwol8vsfO4m2WP8Dyk9", "spotify_id": "1xkEwol8vsfO4m2WP8Dyk9", "spotify_name": "Trim", "followers": 133286, "popularity": 61, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174444bd23bf79336d211060989", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2005-08-17", "end_date": "", "disambiguation": "Charleston based rapper", "musicbrainz_url": "https://musicbrainz.org/artist/3c2d4503-94b2-4673-b1e5-30b1090bb22c"}, {"name": "Little Stranger", "spotify_url": "https://open.spotify.com/artist/6nheJ1XoAkaKOLIgHzMbTq", "spotify_id": "6nheJ1XoAkaKOLIgHzMbTq", "spotify_name": "Little Stranger", "followers": 110527, "popularity": 56, "genres": "reggae rock", "image_url": "https://i.scdn.co/image/ab67616100005174dabad4771f795aecf4e14e5d", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "2015", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/c866bf23-5150-4b10-9a8c-89d93a08ea6c"}, {"name": "Stop Light Observations", "spotify_url": "https://open.spotify.com/artist/2EOIjdzbFGRM87IvJU34JJ", "spotify_id": "2EOIjdzbFGRM87IvJU34JJ", "spotify_name": "Stop Light Observations", "followers": 75725, "popularity": 45, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517424875d45ed3a392b28986f97", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "Mount Pleasant", "begin_date": "2011", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/d644969c-cb2f-4a66-8c2e-b92c3bae9a88"}, {"name": "Matt Watson", "spotify_url": "https://open.spotify.com/artist/2RcKnvHSzBY1sML849T7mR", "spotify_id": "2RcKnvHSzBY1sML849T7mR", "spotify_name": "Matt Watson", "followers": 68979, "popularity": 35, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174587714939d57567462e96bd4", "match": "mb-link", "type": "Person", "area": "Los Angeles", "begin_area": "Charleston", "begin_date": "1996-02-05", "end_date": "", "disambiguation": "member of SuperMega", "musicbrainz_url": "https://musicbrainz.org/artist/d8c9eef5-1f61-4811-8c35-31fb9a69a3be"}, {"name": "SUSTO", "spotify_url": "https://open.spotify.com/artist/7foyQbi7GKriLiv1GPVEwt", "spotify_id": "7foyQbi7GKriLiv1GPVEwt", "spotify_name": "Susto", "followers": 59595, "popularity": 48, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517480e8ae939176aa14f64acf58", "match": "mb-link", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "US indie rock band", "musicbrainz_url": "https://musicbrainz.org/artist/624447ba-f5de-481e-8d37-ca9aed1b046f"}, {"name": "Haley Mae Campbell", "spotify_url": "https://open.spotify.com/artist/2NDqx1z4TTkFr0QOnk8nX3", "spotify_id": "2NDqx1z4TTkFr0QOnk8nX3", "spotify_name": "Haley Mae Campbell", "followers": 43558, "popularity": 36, "genres": "pop country", "image_url": "https://i.scdn.co/image/ab67616100005174cf2072e51a6bf63a4eeee15e", "match": "mb-link", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/e1b23715-64f5-4b2a-bf89-20de44b8e235"}, {"name": "Kelontae Gavin", "spotify_url": "https://open.spotify.com/artist/1G73Usb8ZrWsOSxOmufR3D", "spotify_id": "1G73Usb8ZrWsOSxOmufR3D", "spotify_name": "Kelontae Gavin", "followers": 42260, "popularity": 38, "genres": "gospel; worship", "image_url": "https://i.scdn.co/image/ab6761610000517493796baa86c56d587907a9b2", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1999-03-28", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/e072fdff-f7fb-4ab1-8331-9cbba02d9814"}, {"name": "Deepfield", "spotify_url": "https://open.spotify.com/artist/7wBfoMAxS8VHDwIFnh6cVi", "spotify_id": "7wBfoMAxS8VHDwIFnh6cVi", "spotify_name": "Deepfield", "followers": 39706, "popularity": 41, "genres": "post-grunge", "image_url": "https://i.scdn.co/image/ab6761610000517432b1d079f349117cae8d7be5", "match": "mb-link", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2005", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b6061943-f8a3-442b-9900-6dc733994272"}, {"name": "Brendan James", "spotify_url": "https://open.spotify.com/artist/2aIPQyKrN3oVev1kHudiai", "spotify_id": "2aIPQyKrN3oVev1kHudiai", "spotify_name": "Brendan James", "followers": 37257, "popularity": 34, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174e926462052b049b2109a512e", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "Nashua", "begin_date": "1979-07-17", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/10bb88d0-0003-4e7f-9581-0f12ab2ae6ff"}, {"name": "Jeremy Messersmith", "spotify_url": "https://open.spotify.com/artist/7ifrN0oUJbWF1EhktyTKte", "spotify_id": "7ifrN0oUJbWF1EhktyTKte", "spotify_name": "jeremy messersmith", "followers": 31400, "popularity": 32, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174aa663cb05409ceac9c0da2df", "match": "mb-link", "type": "Person", "area": "Minneapolis", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/358df796-546f-4b3b-bd0f-238ace09e02b"}, {"name": "Newgrounds Death Rugby", "spotify_url": "https://open.spotify.com/artist/6GrYDArZDdBidjtNBBKpoa", "spotify_id": "6GrYDArZDdBidjtNBBKpoa", "spotify_name": "Newgrounds Death Rugby", "followers": 27611, "popularity": 31, "genres": "midwest emo; folk punk", "image_url": "https://i.scdn.co/image/ab67616100005174241bf7ae943a08e5d7ee3e20", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "2018", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/5bede335-161b-44bc-903c-68f00d6bd078"}, {"name": "Melanie Thornton", "spotify_url": "https://open.spotify.com/artist/2apYMRrg5FxN4go0pfsCvf", "spotify_id": "2apYMRrg5FxN4go0pfsCvf", "spotify_name": "Melanie Thornton", "followers": 19949, "popularity": 34, "genres": "christmas", "image_url": "https://i.scdn.co/image/ab676161000051749b83bf93cd70ac461df4bc7f", "match": "mb-link", "type": "Person", "area": "Germany", "begin_area": "Charleston", "begin_date": "1967-05-13", "end_date": "2001-11-24", "disambiguation": "American\u2010German Euro\u2010dance artist", "musicbrainz_url": "https://musicbrainz.org/artist/cbd6fd82-f2a4-4275-91bd-6b45de870f11"}, {"name": "Joseph Dubay", "spotify_url": "https://open.spotify.com/artist/7hKjAmQje8IE7SkL2KV7Rx", "spotify_id": "7hKjAmQje8IE7SkL2KV7Rx", "spotify_name": "Joseph Dubay", "followers": 15230, "popularity": 19, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174dcee29d94eea2e0b8423e2f9", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/12d44f99-e1b0-4b22-9215-a25e2cc65246"}, {"name": "Doom Flamingo", "spotify_url": "https://open.spotify.com/artist/0b94jN9hNa6rBGfzOcZAMr", "spotify_id": "0b94jN9hNa6rBGfzOcZAMr", "spotify_name": "Doom Flamingo", "followers": 14356, "popularity": 32, "genres": "jam band", "image_url": "https://i.scdn.co/image/ab67616100005174120e74a5571a66e6acd0d1b0", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/ed8d9685-35c3-4d2d-a230-9e019c032c53"}, {"name": "Interceptor", "spotify_url": "https://open.spotify.com/artist/3NypWvXJXDvJWf3gVg0LNL", "spotify_id": "3NypWvXJXDvJWf3gVg0LNL", "spotify_name": "Interceptor", "followers": 13170, "popularity": 21, "genres": "speed metal; thrash metal; black metal", "image_url": "https://i.scdn.co/image/ab6761610000517455ea10a2132d915fec3d1d2e", "match": "mb-link", "type": "Group", "area": "South Carolina", "begin_area": "Charleston", "begin_date": "2022", "end_date": "", "disambiguation": "American thrash metal band", "musicbrainz_url": "https://musicbrainz.org/artist/83026730-7f70-46ab-aaa7-224bf4a571a9"}, {"name": "Ranky Tanky", "spotify_url": "https://open.spotify.com/artist/1ZeZuI7ZkgyNJeQIj54Gvl", "spotify_id": "1ZeZuI7ZkgyNJeQIj54Gvl", "spotify_name": "Ranky Tanky", "followers": 10494, "popularity": 17, "genres": "", "image_url": "https://i.scdn.co/image/ab6772690000dd224310c2717f83717374906809", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "quintet based in Charleston, South Carolina, United States", "musicbrainz_url": "https://musicbrainz.org/artist/adf818cb-85b9-43de-91dc-9ae591b3447c"}, {"name": "Jarell Smalls", "spotify_url": "https://open.spotify.com/artist/0pnQWCUCGdeWvHUqSPwkTZ", "spotify_id": "0pnQWCUCGdeWvHUqSPwkTZ", "spotify_name": "Jarell Smalls & Company", "followers": 9675, "popularity": 23, "genres": "gospel; traditional gospel", "image_url": "https://i.scdn.co/image/ab67616100005174781a08eb30471bf2d04e8b81", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "gospel singer", "musicbrainz_url": "https://musicbrainz.org/artist/083e377f-86b6-48ea-ac40-4bc256e3d831"}, {"name": "London Gatch", "spotify_url": "https://open.spotify.com/artist/50l42yX9ACfwA0plxFO0Ah", "spotify_id": "50l42yX9ACfwA0plxFO0Ah", "spotify_name": "London Gatch", "followers": 9236, "popularity": 22, "genres": "worship; christian", "image_url": "https://i.scdn.co/image/ab67616100005174dff6ee4c6eeac2b2dfe685fa", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "worship leader at Seacoast Church", "musicbrainz_url": "https://musicbrainz.org/artist/854c23bf-1adf-476d-a1ee-0f0d97f62e0e"}, {"name": "Your Spirit Dies", "spotify_url": "https://open.spotify.com/artist/0iLA9qNrXngiyQqZjcnwxt", "spotify_id": "0iLA9qNrXngiyQqZjcnwxt", "spotify_name": "Your Spirit Dies", "followers": 8247, "popularity": 17, "genres": "metalcore; mathcore; deathcore", "image_url": "https://i.scdn.co/image/ab676161000051744f30de8f892dec0c2b6b224f", "match": "mb-link", "type": "Group", "area": "Columbia", "begin_area": "Charleston", "begin_date": "2019", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/c93794fe-8bb1-4d76-9bc7-cf9a88c81798"}, {"name": "Damn Skippy", "spotify_url": "https://open.spotify.com/artist/2uVoa0d4dequ0RVIR77R1h", "spotify_id": "2uVoa0d4dequ0RVIR77R1h", "spotify_name": "Damn Skippy", "followers": 7690, "popularity": 37, "genres": "reggae rock", "image_url": "https://i.scdn.co/image/ab67616100005174ce88affefd924a7924488024", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "Charleston, SC rapper", "musicbrainz_url": "https://musicbrainz.org/artist/d3df7a7f-678c-4462-875c-d3f423ede27b"}, {"name": "Whitehall", "spotify_url": "https://open.spotify.com/artist/7MJBivXsykJUNKMUKfKfgx", "spotify_id": "7MJBivXsykJUNKMUKfKfgx", "spotify_name": "Whitehall", "followers": 5787, "popularity": 17, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517412389e2d1b5fcb29d5a4e3fd", "match": "mb-link", "type": "Group", "area": "Brooklyn", "begin_area": "Charleston", "begin_date": "2015-01-01", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/549595c6-e84a-42e3-9a97-292770f2aa93"}, {"name": "Brave Baby", "spotify_url": "https://open.spotify.com/artist/0W19TxxAkzwDekDogxjguh", "spotify_id": "0W19TxxAkzwDekDogxjguh", "spotify_name": "Brave Baby", "followers": 5446, "popularity": 23, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051748172d020fa079a57a25664b4", "match": "mb-link", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2012-01", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/99723eb0-363f-463b-b096-5cfc5f5980d2"}, {"name": "The Films", "spotify_url": "https://open.spotify.com/artist/1f6kZdkQqTTia7BfEnsYmH", "spotify_id": "1f6kZdkQqTTia7BfEnsYmH", "spotify_name": "The Films", "followers": 4801, "popularity": 21, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02c34c3110e89c192472eb45da", "match": "mb-link", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2003", "end_date": "", "disambiguation": "US indie pop band", "musicbrainz_url": "https://musicbrainz.org/artist/a43dccad-c63f-49e5-b342-f96debc02ac4"}, {"name": "She Returns From War", "spotify_url": "https://open.spotify.com/artist/1xV0GnS0rRGdvPYEEeLWhH", "spotify_id": "1xV0GnS0rRGdvPYEEeLWhH", "spotify_name": "She Returns From War", "followers": 3886, "popularity": 10, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174a190521cd01ce28d6e1b89cc", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/49e5c60d-3a49-4b94-a641-7c33664098d1"}, {"name": "Eric Bass", "spotify_url": "https://open.spotify.com/artist/7I0523g62kTHHZIes42btq", "spotify_id": "7I0523g62kTHHZIes42btq", "spotify_name": "Eric Bass Presents", "followers": 3578, "popularity": 16, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517446c2d91a959d26fed5167190", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "????-10-23", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/80ac8f38-c747-48ea-a7c2-093d10d39fe4"}, {"name": "Lil Boss", "spotify_url": "https://open.spotify.com/artist/6cKExR8TKTAZr7pOChcCtG", "spotify_id": "6cKExR8TKTAZr7pOChcCtG", "spotify_name": "Lil Boss", "followers": 2693, "popularity": 22, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174c858d25fe2b31a7857fd9f29", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "North Charleston , SC rapper", "musicbrainz_url": "https://musicbrainz.org/artist/6553358e-d446-4a47-b3bf-d2ccac83fc1a"}, {"name": "Darryl D\u2019Bonneau", "spotify_url": "https://open.spotify.com/artist/5Y5uAk2EaMYhSsxAyZHlTw", "spotify_id": "5Y5uAk2EaMYhSsxAyZHlTw", "spotify_name": "Darryl D'Bonneau", "followers": 2527, "popularity": 24, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051741b3af375e111c280ece725b5", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/ec198e05-6fa2-4429-b0e0-780e2ee6be37"}, {"name": "Babe Club", "spotify_url": "https://open.spotify.com/artist/63qseSjWgwIByzbnELIR1Q", "spotify_id": "63qseSjWgwIByzbnELIR1Q", "spotify_name": "Babe Club", "followers": 2337, "popularity": 9, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051749547012943662f0e9c1f3fae", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "2018-10", "end_date": "", "disambiguation": "Charleston-based indie pop band", "musicbrainz_url": "https://musicbrainz.org/artist/d84da4ab-2754-42b0-8373-5300c7196ee8"}, {"name": "The Working Title", "spotify_url": "https://open.spotify.com/artist/1lBEmqPgDkHaPx2GhkI89Z", "spotify_id": "1lBEmqPgDkHaPx2GhkI89Z", "spotify_name": "The Working Title", "followers": 1921, "popularity": 9, "genres": "", "image_url": "https://i.scdn.co/image/d6dc0244a71acd00d462b440a7eef02b5c9ccd24", "match": "mb-link", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2001", "end_date": "2009", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/dc9a5b90-e041-46d3-99a3-56979551915f"}, {"name": "Beer", "spotify_url": "https://open.spotify.com/artist/5Gn1oh1458tB2IxVa7mtZq", "spotify_id": "5Gn1oh1458tB2IxVa7mtZq", "spotify_name": "Beer", "followers": 1904, "popularity": 16, "genres": "egg punk", "image_url": "https://i.scdn.co/image/ab6761610000517458efaef3746149d3dca31269", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "Punk band from Charleston", "musicbrainz_url": "https://musicbrainz.org/artist/1bb16336-77b2-446a-8dc3-5d6c2f8c3764"}, {"name": "Seacoast Music", "spotify_url": "https://open.spotify.com/artist/2ZButmw5JARacQ68lpJZIc", "spotify_id": "2ZButmw5JARacQ68lpJZIc", "spotify_name": "Seacoast Music", "followers": 1877, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051746188393cb1521a6eaf63cd0d", "match": "mb-link", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2012", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/906bc39a-4204-4712-a8ec-612db10735c0"}, {"name": "KiddFinesse", "spotify_url": "https://open.spotify.com/artist/1qSNqVLpNnsxDiJCaEapzy", "spotify_id": "1qSNqVLpNnsxDiJCaEapzy", "spotify_name": "KiddFinesse", "followers": 1765, "popularity": 3, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051748659a4266d930a58518fa009", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/64862c12-3b0a-4a81-b049-564e2f2c34a3"}, {"name": "Grace Joyner", "spotify_url": "https://open.spotify.com/artist/5TmLuKNgQC1YqM4gGGWXJd", "spotify_id": "5TmLuKNgQC1YqM4gGGWXJd", "spotify_name": "Grace Joyner", "followers": 1696, "popularity": 5, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174583257a3413fe023a618ed5f", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/126bb737-c63a-4328-8748-65bed9fc9319"}, {"name": "Black Decelerant", "spotify_url": "https://open.spotify.com/artist/3hDJXXTF8ZlZwrmiRuWtYo", "spotify_id": "3hDJXXTF8ZlZwrmiRuWtYo", "spotify_name": "Black Decelerant", "followers": 1607, "popularity": 7, "genres": "ambient jazz; ambient; experimental", "image_url": "https://i.scdn.co/image/ab67616100005174eabd8ed8aca492c1038cb35f", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/fe376221-bf73-4440-9d83-e52b551ddecb"}, {"name": "Andy Dick", "spotify_url": "https://open.spotify.com/artist/2QBVCrvQ6KA21qgexvuzAY", "spotify_id": "2QBVCrvQ6KA21qgexvuzAY", "spotify_name": "Andy Dick", "followers": 1310, "popularity": 30, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02641a2c20ad3e5f4c0d43d1fc", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1965-12-21", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/2a18326b-450d-4fe0-907c-6d93521e88c1"}, {"name": "Infinitefreefall", "spotify_url": "https://open.spotify.com/artist/4kqUFUzqSqwhNE5nujxmCQ", "spotify_id": "4kqUFUzqSqwhNE5nujxmCQ", "spotify_name": "Infinitefreefall", "followers": 1157, "popularity": 23, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174ace30323430ea921a16acbef", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b4ee256a-01ae-4f8d-80df-ad2c0f60840d"}, {"name": "Chris Smith", "spotify_url": "https://open.spotify.com/artist/5dMaOXLKrpk8oiW8fc7rek", "spotify_id": "5dMaOXLKrpk8oiW8fc7rek", "spotify_name": "Chris Smith", "followers": 1040, "popularity": 32, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e0225641a7a9f009139a0fb0f6a", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1879-10-12", "end_date": "1949-10-04", "disambiguation": "Ragtime composer", "musicbrainz_url": "https://musicbrainz.org/artist/b46d3ee1-e9f5-4109-a7b9-17e0b1e3dfcc"}, {"name": "Layton Meacham", "spotify_url": "https://open.spotify.com/artist/4XvamaEv3YP4EL8YPys1ID", "spotify_id": "4XvamaEv3YP4EL8YPys1ID", "spotify_name": "Layton Meacham", "followers": 776, "popularity": 17, "genres": "reggae rock", "image_url": "https://i.scdn.co/image/ab676161000051747939fca441ce5c08372da77a", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/f65c8b9a-94e9-4e17-a079-0bcfb54c8e14"}, {"name": "Playboy Sideburn", "spotify_url": "https://open.spotify.com/artist/4DxJuMsyuSb8BPWNp1RT89", "spotify_id": "4DxJuMsyuSb8BPWNp1RT89", "spotify_name": "Playboy Sideburn", "followers": 622, "popularity": 11, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174de9e04e85ef626e2c50a48de", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/f4d30c93-1e41-49f4-ab72-c13239fbcec5"}, {"name": "Acreil", "spotify_url": "https://open.spotify.com/artist/0Osw26fYX4sjn3fuZtdOBi", "spotify_id": "0Osw26fYX4sjn3fuZtdOBi", "spotify_name": "Acreil", "followers": 593, "popularity": 0, "genres": "idm; vaporwave", "image_url": "https://i.scdn.co/image/ab67616d00001e0250f5d84e5b98fb6c61ea5368", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/cb018fe3-6e59-479d-abde-ed30cb2170bd"}, {"name": "Ashswervo", "spotify_url": "https://open.spotify.com/artist/2Dqx77HiKrzZql64VXQ1uH", "spotify_id": "2Dqx77HiKrzZql64VXQ1uH", "spotify_name": "Ashswervo", "followers": 457, "popularity": 18, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517499e71725a4f922b625fc3e26", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/11246e47-6c92-46dc-bf0a-4618f88b7333"}, {"name": "Saint Joan", "spotify_url": "https://open.spotify.com/artist/17182z75L2dbfdsnnXFmdf", "spotify_id": "17182z75L2dbfdsnnXFmdf", "spotify_name": "Saint Joan", "followers": 421, "popularity": 5, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174e4e69cb8d2073f47d3988c5a", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "Charleston-based synth-pop artist", "musicbrainz_url": "https://musicbrainz.org/artist/02a1eee4-507e-46ff-81f2-1e87d49a172c"}, {"name": "Felicia Finley", "spotify_url": "https://open.spotify.com/artist/6YbIgKQd0Qws5BtH3YqZzQ", "spotify_id": "6YbIgKQd0Qws5BtH3YqZzQ", "spotify_name": "Felicia Finley", "followers": 405, "popularity": 13, "genres": "musicals", "image_url": "https://i.scdn.co/image/ab67616d00001e02485bf380269d676319daac8e", "match": "mb-link", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1971-12-14", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/c3a059bf-a3fa-47c2-a666-89f148c4989f"}, {"name": "Slim S.O.U.L", "spotify_url": "https://open.spotify.com/artist/50WIo3xbPOC4wKCd10iimx", "spotify_id": "50WIo3xbPOC4wKCd10iimx", "spotify_name": "Slim S.O.U.L", "followers": 374, "popularity": 1, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174b60d630d666cac88edefcee1", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/1bf2c538-ac9e-4f6e-afaf-5c24d24e553e"}, {"name": "DJ Speedy", "spotify_url": "https://open.spotify.com/artist/6bS9W2ZUIZCwumkGP63dSp", "spotify_id": "6bS9W2ZUIZCwumkGP63dSp", "spotify_name": "DJ Speedy", "followers": 371, "popularity": 9, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051745fc49c5e5ed575e6d7046c17", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1976-02-07", "end_date": "", "disambiguation": "US hip hop DJ Harvey Miller", "musicbrainz_url": "https://musicbrainz.org/artist/7fdb61c7-ee44-439f-b326-828a92b61727"}, {"name": "Robbie Madison", "spotify_url": "https://open.spotify.com/artist/45RORPK5QqBg6kk8KivZ2F", "spotify_id": "45RORPK5QqBg6kk8KivZ2F", "spotify_name": "Robbie Madison", "followers": 358, "popularity": 5, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174b227910b10520fa16b16f6a1", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b75ae1d6-87cd-4aa9-95d5-60797cc83092"}, {"name": "A Fragile Tomorrow", "spotify_url": "https://open.spotify.com/artist/36j3p0TaCqKs24aXWiFY1X", "spotify_id": "36j3p0TaCqKs24aXWiFY1X", "spotify_name": "A Fragile Tomorrow", "followers": 346, "popularity": 2, "genres": "power pop", "image_url": "https://i.scdn.co/image/ab6761610000517436d5d47181934fce3f28deb2", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "Montgomery", "begin_date": "2003", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b544ace9-198b-43e8-b184-5a3efa2c03bd"}, {"name": "Tyrie", "spotify_url": "https://open.spotify.com/artist/0jDp6LBoiAJ7xMQ0uUsBcu", "spotify_id": "0jDp6LBoiAJ7xMQ0uUsBcu", "spotify_name": "Tyrie", "followers": 327, "popularity": 1, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517444eabf094ca2cd4c1575fda9", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "South Carolina producer / alt rapper", "musicbrainz_url": "https://musicbrainz.org/artist/8efa2766-bd4a-443e-a36a-6d5a3da32acb"}, {"name": "The Galactic Heroes", "spotify_url": "https://open.spotify.com/artist/5IGD77nwAUSO6GrFBQimZn", "spotify_id": "5IGD77nwAUSO6GrFBQimZn", "spotify_name": "The Galactic Heroes", "followers": 301, "popularity": 1, "genres": "jangle pop", "image_url": "https://i.scdn.co/image/ab67616d00001e02ff432b5d5a2f04172d434a12", "match": "mb-link", "type": "Group", "area": "Portland", "begin_area": "Charleston", "begin_date": "1998", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/5dbf3121-3258-4a78-b317-aa0a636ae958"}, {"name": "Erode the Dream", "spotify_url": "https://open.spotify.com/artist/7eBFZM9VyajdFHDO3zqCOg", "spotify_id": "7eBFZM9VyajdFHDO3zqCOg", "spotify_name": "Erode The Dream", "followers": 279, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517469059d8599319bff3dfaa016", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/dd835e01-709b-4043-b87f-7e5f0ccbb868"}, {"name": "Anergy", "spotify_url": "https://open.spotify.com/artist/2ieEhgjL0B9wfudgX2abkO", "spotify_id": "2ieEhgjL0B9wfudgX2abkO", "spotify_name": "Anergy", "followers": 247, "popularity": 0, "genres": "queercore", "image_url": "https://i.scdn.co/image/ab67616100005174d657f9abf220ece82c065fe6", "match": "mb-link", "type": "Group", "area": "", "begin_area": "Charleston", "begin_date": "2016-08-16", "end_date": "", "disambiguation": "Punk rock band", "musicbrainz_url": "https://musicbrainz.org/artist/ddcbb657-ce82-4c55-a647-837b9bb379ed"}, {"name": "Destiny Zavala", "spotify_url": "https://open.spotify.com/artist/7EKvaFI1AcNavShwyebwSe", "spotify_id": "7EKvaFI1AcNavShwyebwSe", "spotify_name": "Destiny Zavala", "followers": 237, "popularity": 1, "genres": "christian alternative rock", "image_url": "https://i.scdn.co/image/ab67616100005174c97f792bf2e65e0020e0dffe", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/435ac26e-bcee-42e2-bc5e-0d8cddf84327"}, {"name": "Whiskey Diablo", "spotify_url": "https://open.spotify.com/artist/6vTOYreaTg5ZbzrQYVXVM7", "spotify_id": "6vTOYreaTg5ZbzrQYVXVM7", "spotify_name": "Whiskey Diablo", "followers": 156, "popularity": 0, "genres": "rockabilly", "image_url": "https://i.scdn.co/image/ab67616100005174f4b9fdba803efe7e1f272c7a", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/e2e43eb2-7ef3-48c2-abbb-8a296fe40f03"}, {"name": "Company", "spotify_url": "https://open.spotify.com/artist/0K5MG1lKHRcfIxR71foMCn", "spotify_id": "0K5MG1lKHRcfIxR71foMCn", "spotify_name": "Company", "followers": 132, "popularity": 1, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02344aebfd25a25717b28bd6a0", "match": "mb-link", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "Charleston based folk rock band", "musicbrainz_url": "https://musicbrainz.org/artist/c62c0e08-7245-4b5f-b3d7-e3705f06ccd9"}, {"name": "benz.birdz", "spotify_url": "https://open.spotify.com/artist/19opitLKJWihzozGlf4fA7", "spotify_id": "19opitLKJWihzozGlf4fA7", "spotify_name": "Benz.Birdz.", "followers": 128, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051747777dfaa06b5035de9c18574", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "Charleston SC", "musicbrainz_url": "https://musicbrainz.org/artist/6403c6f5-f22b-4550-a8cd-b05588afbdf2"}, {"name": "Nu", "spotify_url": "https://open.spotify.com/artist/2cuV6nDDq1tARWLZdVAgN4", "spotify_id": "2cuV6nDDq1tARWLZdVAgN4", "spotify_name": "Nu", "followers": 119, "popularity": 11, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517405623797c6c3224e6372bb2c", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "South Carolina emcee", "musicbrainz_url": "https://musicbrainz.org/artist/c441cb08-ea84-4df7-9677-cb98516ecdd8"}, {"name": "Angel Gray", "spotify_url": "https://open.spotify.com/artist/2TlksZ56DCE8p5gG62z5xA", "spotify_id": "2TlksZ56DCE8p5gG62z5xA", "spotify_name": "Angel Gray", "followers": 99, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517401441d3513118c7c0a691d78", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2023-04-13", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/cdd3b572-ff48-412e-b1b5-e0d78eeb2357"}, {"name": "Morgan\u2019s Road", "spotify_url": "https://open.spotify.com/artist/2qcRc82niO17loXru14OGl", "spotify_id": "2qcRc82niO17loXru14OGl", "spotify_name": "Morgan's Road", "followers": 91, "popularity": 0, "genres": "roots rock; funk rock", "image_url": "https://i.scdn.co/image/ab67616100005174b5e1d35f321982131d3cce0b", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "Florence", "begin_date": "2011-03-01", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/1e64db3c-0904-487b-b5e3-3043cdcd04e2"}, {"name": "Jerry Brown", "spotify_url": "https://open.spotify.com/artist/1GJ8xuzW9FXNcmzI7ZFYeq", "spotify_id": "1GJ8xuzW9FXNcmzI7ZFYeq", "spotify_name": "Jerry Brown", "followers": 80, "popularity": 9, "genres": "rocksteady; roots reggae", "image_url": "", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "United States", "begin_date": "", "end_date": "", "disambiguation": "American Actor and Recording Artist", "musicbrainz_url": "https://musicbrainz.org/artist/12afcfcc-01a8-4a65-89a5-a42485d1f4ed"}, {"name": "A.P. Appleberry", "spotify_url": "https://open.spotify.com/artist/47LywxWRI3Bfev1Oft0N1L", "spotify_id": "47LywxWRI3Bfev1Oft0N1L", "spotify_name": "A.P. Appleberry", "followers": 71, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517462b6683cc4ff28d0260e8ce4", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1979-06-12", "end_date": "", "disambiguation": "American Rapper", "musicbrainz_url": "https://musicbrainz.org/artist/2439a29b-0031-4086-9e58-01afa0db7d6d"}, {"name": "Baby Breeze", "spotify_url": "https://open.spotify.com/artist/5Em2i46P4rS9rcB7ryrdrI", "spotify_id": "5Em2i46P4rS9rcB7ryrdrI", "spotify_name": "Baby Breeze", "followers": 55, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051744e3e75663e628e60d52c01a6", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "Charleston", "begin_date": "1987-06-25", "end_date": "", "disambiguation": "Charleston-area rapper", "musicbrainz_url": "https://musicbrainz.org/artist/6ba2749e-f5ac-4a1d-ae0b-f9a9c83a21bf"}, {"name": "Eko Spirit", "spotify_url": "https://open.spotify.com/artist/39VoOr3XbPtTsZcR2IKroU", "spotify_id": "39VoOr3XbPtTsZcR2IKroU", "spotify_name": "Eko Spirit", "followers": 50, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051745644844ec1f25549883dfddc", "match": "mb-link", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1987-06-07", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/497e7622-0d69-4914-9df3-ec068fba01f7"}, {"name": "Noah Barnhart", "spotify_url": "https://open.spotify.com/artist/6Jj4Bvl6ULuI3wbTuECawX", "spotify_id": "6Jj4Bvl6ULuI3wbTuECawX", "spotify_name": "Noah Barnhart", "followers": 50, "popularity": 1, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174d22eb021ac6302667f1a9366", "match": "mb-link", "type": "Person", "area": "Nashville", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "classical cellist", "musicbrainz_url": "https://musicbrainz.org/artist/23d50c59-d6da-488e-b9e9-a4d9fe2a4b50"}, {"name": "Burn the Fields", "spotify_url": "https://open.spotify.com/artist/0YGv27zTlwgjgGhITIK8fv", "spotify_id": "0YGv27zTlwgjgGhITIK8fv", "spotify_name": "Burn the Fields", "followers": 43, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174beb44e5c374728bad120cf4c", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "2013", "end_date": "", "disambiguation": "Charleston, South Carolina band", "musicbrainz_url": "https://musicbrainz.org/artist/2a1dcdf3-204b-406f-a883-daf2ca416fe4"}, {"name": "Cady Coleman", "spotify_url": "https://open.spotify.com/artist/2GIGS6ZBcRp4uVJDmQB3Ex", "spotify_id": "2GIGS6ZBcRp4uVJDmQB3Ex", "spotify_name": "Cady Coleman", "followers": 42, "popularity": 2, "genres": "celtic", "image_url": "", "match": "mb-link", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1960-12-14", "end_date": "", "disambiguation": "NASA Astronaut", "musicbrainz_url": "https://musicbrainz.org/artist/14eace8e-72be-4346-adf7-3f0d7bfb2e6d"}, {"name": "Nathan Koci", "spotify_url": "https://open.spotify.com/artist/0i8kDkrhaxWqhlAKpuSFdE", "spotify_id": "0i8kDkrhaxWqhlAKpuSFdE", "spotify_name": "Nathan Koci", "followers": 39, "popularity": 2, "genres": "contemporary classical", "image_url": "https://i.scdn.co/image/ab67616d00001e02e82e2d35da030a1b02e66530", "match": "mb-link", "type": "Person", "area": "New York", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/7e286c2d-9e95-400b-9e35-ea77677334c6"}, {"name": "David Stahl", "spotify_url": "https://open.spotify.com/artist/6MOenaqeMYFM2iFdWpb1Wz", "spotify_id": "6MOenaqeMYFM2iFdWpb1Wz", "spotify_name": "David Stahl", "followers": 35, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02313dfdba2e53e0cc16c771dc", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "conductor", "musicbrainz_url": "https://musicbrainz.org/artist/cab8965d-98eb-44c3-af39-15a35fffc2ff"}, {"name": "Skye Paige", "spotify_url": "https://open.spotify.com/artist/0aB5b3JgyMR9tOdxxj8wz9", "spotify_id": "0aB5b3JgyMR9tOdxxj8wz9", "spotify_name": "Skye Paige and the Original Recipe", "followers": 35, "popularity": 0, "genres": "rockabilly", "image_url": "https://i.scdn.co/image/ab67616d00001e02ff14ac7eac51084c4378287b", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/2cca6632-373b-492a-ab2d-5adda83b983d"}, {"name": "Nocturnal Kernalz", "spotify_url": "https://open.spotify.com/artist/63TMhglocoX1WxJePBGtee", "spotify_id": "63TMhglocoX1WxJePBGtee", "spotify_name": "Nocturnal Kernalz", "followers": 29, "popularity": 0, "genres": "", "image_url": "", "match": "mb-link", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2016-01", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/9a07de75-1df5-4de9-aa1d-e65bad1dd8d2"}, {"name": "J Timeless", "spotify_url": "https://open.spotify.com/artist/5IXmfQxD326IPPLUK7fzHE", "spotify_id": "5IXmfQxD326IPPLUK7fzHE", "spotify_name": "Jtimeless", "followers": 24, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174174e98370a0d99f0c0100db3", "match": "mb-link", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1983-08-01", "end_date": "", "disambiguation": "American Piano Composer", "musicbrainz_url": "https://musicbrainz.org/artist/6c2bd254-579a-43aa-b5fb-0542c2f87ac7"}, {"name": "Shawn Shade", "spotify_url": "https://open.spotify.com/artist/1AER81hDmcyXW0HJMSL1vd", "spotify_id": "1AER81hDmcyXW0HJMSL1vd", "spotify_name": "Shawn Shade", "followers": 18, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174042346161c99f17e195eda22", "match": "mb-link", "type": "Person", "area": "Charleston", "begin_area": "Charleston", "begin_date": "1993-12-26", "end_date": "", "disambiguation": "Shawn Shade \u00d7 Music By Suno", "musicbrainz_url": "https://musicbrainz.org/artist/670c7bfe-c538-42e8-99b0-1bc7a24cf0e5"}, {"name": "Parasitic Ritual", "spotify_url": "https://open.spotify.com/artist/521jo6VYaGlBADnHra0Ls4", "spotify_id": "521jo6VYaGlBADnHra0Ls4", "spotify_name": "Parasitic Ritual", "followers": 10, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174df01f1c75a7ba183dbaef01b", "match": "mb-link", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "2019", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/10b59995-d4e5-47c1-9e6a-f3e826b684ed"}, {"name": "Oasis", "spotify_url": "https://open.spotify.com/artist/2DaxqgrOhkeH0fpeiQq2f4", "spotify_id": "2DaxqgrOhkeH0fpeiQq2f4", "spotify_name": "Oasis", "followers": 14528216, "popularity": 85, "genres": "britpop", "image_url": "https://i.scdn.co/image/ab6761610000517423a08396d484aa0e81d73527", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "released True Love", "musicbrainz_url": "https://musicbrainz.org/artist/06cb9b8e-4dc7-453c-9564-d95731f2bf77"}, {"name": "Mike Williams", "spotify_url": "https://open.spotify.com/artist/3IpvVrP3VLhruTmnququq7", "spotify_id": "3IpvVrP3VLhruTmnququq7", "spotify_name": "Mike Williams", "followers": 377995, "popularity": 55, "genres": "future house; big room; edm", "image_url": "https://i.scdn.co/image/ab676161000051740c7c590e2299252d72b09985", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "violinist from South Carolina", "musicbrainz_url": "https://musicbrainz.org/artist/e34464f2-c0e5-4cf4-91af-0d2f62f9e318"}, {"name": "Congress The Band", "spotify_url": "https://open.spotify.com/artist/4LuzeYhmxPW7iKWUXmyb10", "spotify_id": "4LuzeYhmxPW7iKWUXmyb10", "spotify_name": "Congress The Band", "followers": 29381, "popularity": 53, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174dbcfad9bf0eef55744951f37", "match": "name-search", "type": "", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2023-05", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/072131db-d0d0-4e62-86fd-f0e2d1ba89f2"}, {"name": "Alphonse Mouzon", "spotify_url": "https://open.spotify.com/artist/0UXy6wqMmVQ7PIWFNSXqdk", "spotify_id": "0UXy6wqMmVQ7PIWFNSXqdk", "spotify_name": "Alphonse Mouzon", "followers": 26250, "popularity": 32, "genres": "jazz fusion; jazz funk", "image_url": "https://i.scdn.co/image/3d11fb13fe86a1bd9e27314aa5cce83b9240e13e", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1948-11-21", "end_date": "2016-12-26", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/e03a1f26-23b5-43b9-bb7b-0f3314049abc"}, {"name": "Dangermuffin", "spotify_url": "https://open.spotify.com/artist/0gqa0RV1HWxAXldA7a7TtR", "spotify_id": "0gqa0RV1HWxAXldA7a7TtR", "spotify_name": "Dangermuffin", "followers": 23560, "popularity": 39, "genres": "jam band; newgrass", "image_url": "https://i.scdn.co/image/ab6761610000517480be573e54f003092442b037", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Folly Beach", "begin_date": "2006", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/be91aa51-a817-4484-9701-233822d926d0"}, {"name": "Patti Drew", "spotify_url": "https://open.spotify.com/artist/6CADfReW3qshQNGQ4yPf6c", "spotify_id": "6CADfReW3qshQNGQ4yPf6c", "spotify_name": "Patti Drew", "followers": 18225, "popularity": 40, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02fdbece75f77242118361780d", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1944-12-29", "end_date": "2025-06-16", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/83e0d2a2-d9ce-4e67-9416-b966fde968d5"}, {"name": "Lyricold", "spotify_url": "https://open.spotify.com/artist/2PulpuG22BjEtEXwybPEAW", "spotify_id": "2PulpuG22BjEtEXwybPEAW", "spotify_name": "Lyricold", "followers": 17341, "popularity": 14, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174f26fecd12fd094d79bf71361", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "Charleston", "begin_date": "1987-06-02", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/160eb0fd-950a-4289-92ad-f260a6e5db2b"}, {"name": "Easy Honey", "spotify_url": "https://open.spotify.com/artist/5fKAYiCIzDsV8OqQDl8Erj", "spotify_id": "5fKAYiCIzDsV8OqQDl8Erj", "spotify_name": "Easy Honey", "followers": 14448, "popularity": 31, "genres": "midwest emo", "image_url": "https://i.scdn.co/image/ab676161000051744331262b0da00922e06bb076", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/9a56536e-5edd-4155-9435-20d12b398b24"}, {"name": "Contour", "spotify_url": "https://open.spotify.com/artist/5eUhoxsPgFqAWSfOtwMNBF", "spotify_id": "5eUhoxsPgFqAWSfOtwMNBF", "spotify_name": "Contour", "followers": 13343, "popularity": 27, "genres": "ambient jazz", "image_url": "https://i.scdn.co/image/ab676161000051747fd53e7dd3186812701a972e", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "Charleston Producer", "musicbrainz_url": "https://musicbrainz.org/artist/a67a977e-2e0b-42f6-9c3e-95e9358b0f58"}, {"name": "Kevin Shields", "spotify_url": "https://open.spotify.com/artist/6egkD3KNbPuvrNLuWpB0bM", "spotify_id": "6egkD3KNbPuvrNLuWpB0bM", "spotify_name": "Kevin Shields", "followers": 9382, "popularity": 26, "genres": "shoegaze; spoken word", "image_url": "https://i.scdn.co/image/ab67616d00001e02923bb338e97bb781a9b13043", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "Philadelphia", "begin_date": "", "end_date": "", "disambiguation": "1/2 of Little Stranger", "musicbrainz_url": "https://musicbrainz.org/artist/82967be7-f9b8-4b72-9440-b22e8d301c7e"}, {"name": "Little Bird", "spotify_url": "https://open.spotify.com/artist/2fnV6seL0Y3klLT1gR7Qa2", "spotify_id": "2fnV6seL0Y3klLT1gR7Qa2", "spotify_name": "Little Bird", "followers": 8118, "popularity": 34, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174cc9c78363e05ac5dfd356e29", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "indie rock band", "musicbrainz_url": "https://musicbrainz.org/artist/7182daaa-7bc6-41de-aa40-8d599b5ee14a"}, {"name": "The Explorers Club", "spotify_url": "https://open.spotify.com/artist/1CR8qMZVkRSoIioetcA8u3", "spotify_id": "1CR8qMZVkRSoIioetcA8u3", "spotify_name": "The Explorers Club", "followers": 6832, "popularity": 17, "genres": "power pop", "image_url": "https://i.scdn.co/image/ab67616100005174d3028d40d5e102cfe13190af", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2005", "end_date": "", "disambiguation": "South Carolina pop rock band", "musicbrainz_url": "https://musicbrainz.org/artist/b1e4cd4d-d282-4622-ae99-4504c4880c66"}, {"name": "Fatal", "spotify_url": "https://open.spotify.com/artist/7Kk52c4QPzzgXzsrce4rSF", "spotify_id": "7Kk52c4QPzzgXzsrce4rSF", "spotify_name": "Fatal", "followers": 6444, "popularity": 49, "genres": "german hip hop", "image_url": "https://i.scdn.co/image/ab67616d00001e02b572027500d8064810d2a181", "match": "name-search", "type": "Group", "area": "North Charleston", "begin_area": "", "begin_date": "1985", "end_date": "1993", "disambiguation": "American speed/thrash metal band", "musicbrainz_url": "https://musicbrainz.org/artist/72933991-0ecc-449e-a719-b8a472bc3f4a"}, {"name": "Atlas Road Crew", "spotify_url": "https://open.spotify.com/artist/4UkoCcNqHumllD9mS6XPZz", "spotify_id": "4UkoCcNqHumllD9mS6XPZz", "spotify_name": "Atlas Road Crew", "followers": 6179, "popularity": 23, "genres": "jam band", "image_url": "https://i.scdn.co/image/ab67616100005174522f6e3110d26eb757a1c80c", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "Columbia", "begin_date": "2011-08", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/3f5c3b79-81b1-4a57-be48-be8574f0c694"}, {"name": "Niecy Blues", "spotify_url": "https://open.spotify.com/artist/3iiPUUTrbJ4ObYjWgYoXfD", "spotify_id": "3iiPUUTrbJ4ObYjWgYoXfD", "spotify_name": "Niecy Blues", "followers": 5609, "popularity": 14, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051747a05341b89784eb3e6fb5bb0", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "Oklahoma", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/a351ca76-45cf-4238-a344-d9d652b1332d"}, {"name": "Freddie Green", "spotify_url": "https://open.spotify.com/artist/0MDZeGp2fFapBa7q260Qvs", "spotify_id": "0MDZeGp2fFapBa7q260Qvs", "spotify_name": "Freddie Green", "followers": 5281, "popularity": 16, "genres": "jazz ballads; swing music; jazz", "image_url": "https://i.scdn.co/image/ab67616d00001e0290a15a8813ebc5ba9d0ffdb2", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1911-03-31", "end_date": "1987-03-01", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/28048233-38da-4cee-910b-1a1242ea76be"}, {"name": "Faith Schueler", "spotify_url": "https://open.spotify.com/artist/1XMDQqZDjohdydmKXRSL6I", "spotify_id": "1XMDQqZDjohdydmKXRSL6I", "spotify_name": "Faith Schueler", "followers": 4118, "popularity": 14, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174974786fe9411ace5b834dd40", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "2001", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/99aaa34d-a15a-4193-852d-54906dd32f43"}, {"name": "Slow Runner", "spotify_url": "https://open.spotify.com/artist/4Chn8klatnhzqu9CLNMgHo", "spotify_id": "4Chn8klatnhzqu9CLNMgHo", "spotify_name": "Slow Runner", "followers": 3655, "popularity": 15, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517492215706587d699885ae1096", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "US indie pop band", "musicbrainz_url": "https://musicbrainz.org/artist/0f7be1c3-f695-40d3-a4a5-4ab25240a403"}, {"name": "North Palm Worship", "spotify_url": "https://open.spotify.com/artist/1oSrA2oH5V1Qo4jNPD0BMF", "spotify_id": "1oSrA2oH5V1Qo4jNPD0BMF", "spotify_name": "North Palm Worship", "followers": 3385, "popularity": 27, "genres": "worship", "image_url": "https://i.scdn.co/image/ab67616100005174909d18c61699ca5221ef9b66", "match": "name-search", "type": "Group", "area": "", "begin_area": "Charleston", "begin_date": "2015-01-01", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/c50f2cb1-e903-4228-9db0-f3383ec2c47c"}, {"name": "Rare Creatures", "spotify_url": "https://open.spotify.com/artist/0KsoLloorTqFLrq5XyB8ny", "spotify_id": "0KsoLloorTqFLrq5XyB8ny", "spotify_name": "Rare Creatures", "followers": 2929, "popularity": 13, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051740d267dec52fa03d659fe3a44", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2017-06-29", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/ab1b0fa9-96e3-447b-a571-f6bfad7bfad6"}, {"name": "The Artisanals", "spotify_url": "https://open.spotify.com/artist/7w1f12HqlmmiZpdt7IVvel", "spotify_id": "7w1f12HqlmmiZpdt7IVvel", "spotify_name": "The Artisanals", "followers": 2829, "popularity": 7, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051740f9601192b4b6d09850887f8", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/199d7bfc-16b5-413a-b9f9-84e1b9e33701"}, {"name": "SondorBlue", "spotify_url": "https://open.spotify.com/artist/3Zf7z38ewy0h2RRAQJ9tjz", "spotify_id": "3Zf7z38ewy0h2RRAQJ9tjz", "spotify_name": "SondorBlue", "followers": 2594, "popularity": 8, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051744139abb9ce1ebbe4a6b7462b", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/2754287d-8bfd-4b4c-88d3-5cbcdfe72510"}, {"name": "Long Miles", "spotify_url": "https://open.spotify.com/artist/7fkZYKyi2dSBwsLl8kXdLO", "spotify_id": "7fkZYKyi2dSBwsLl8kXdLO", "spotify_name": "Long Miles", "followers": 2265, "popularity": 15, "genres": "reggae rock", "image_url": "https://i.scdn.co/image/ab67616d00001e02445eb6136212ff0b45eba002", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "Philadelphia", "begin_date": "", "end_date": "", "disambiguation": "Rock/Reggae/Jam Band", "musicbrainz_url": "https://musicbrainz.org/artist/a915b138-4fa1-4296-a29e-03a029bfd416"}, {"name": "Sexbruise?", "spotify_url": "https://open.spotify.com/artist/4c7TAWrA9HFjokDLZU6cnH", "spotify_id": "4c7TAWrA9HFjokDLZU6cnH", "spotify_name": "Sexbruise?", "followers": 2233, "popularity": 5, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174ca0e63c2d46f780d5f21b51c", "match": "name-search", "type": "Group", "area": "", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/2a52c1d1-0978-48d4-9a02-75066b3c4e1e"}, {"name": "Guttural Engorgement", "spotify_url": "https://open.spotify.com/artist/377IYdUOAVL4LSeZgn8lpU", "spotify_id": "377IYdUOAVL4LSeZgn8lpU", "spotify_name": "Guttural Engorgement", "followers": 2012, "popularity": 3, "genres": "grindcore; death metal", "image_url": "https://i.scdn.co/image/ab67616d00001e028240e39cf1ab26bd8466b492", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2006", "end_date": "", "disambiguation": "United States slam/brutal death metal", "musicbrainz_url": "https://musicbrainz.org/artist/e41b97ab-44f2-435d-8998-f1cdb57db814"}, {"name": "Kanika Moore", "spotify_url": "https://open.spotify.com/artist/7l3wgJeWp7SWHnRG8WQ10V", "spotify_id": "7l3wgJeWp7SWHnRG8WQ10V", "spotify_name": "Kanika Moore", "followers": 1936, "popularity": 18, "genres": "jam band", "image_url": "https://i.scdn.co/image/ab67616100005174c4c540af051725979be5a8b1", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/94d4e5af-4d55-4ceb-8276-3052cd69f14b"}, {"name": "Josh Strickland", "spotify_url": "https://open.spotify.com/artist/515HOzF4js6uU1NnpZWI6k", "spotify_id": "515HOzF4js6uU1NnpZWI6k", "spotify_name": "Josh Strickland", "followers": 1719, "popularity": 23, "genres": "musicals", "image_url": "", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1983-10-23", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/5a72f468-5b06-474a-bb83-d7a3600aa90e"}, {"name": "B. Fraser", "spotify_url": "https://open.spotify.com/artist/5HaQ1iUrxbeCxePD242aHL", "spotify_id": "5HaQ1iUrxbeCxePD242aHL", "spotify_name": "B. Fraser", "followers": 1627, "popularity": 9, "genres": "folk punk; midwest emo; queercore; riot grrrl", "image_url": "https://i.scdn.co/image/ab6761610000517435bdfe76875c6e19000768f3", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/5e7317a5-f2cc-4732-9acd-e4723cb115da"}, {"name": "Riot Stares", "spotify_url": "https://open.spotify.com/artist/12cQFjMJf8HYgFqTMwz7Hn", "spotify_id": "12cQFjMJf8HYgFqTMwz7Hn", "spotify_name": "Riot Stares", "followers": 1622, "popularity": 2, "genres": "hardcore", "image_url": "https://i.scdn.co/image/ab676161000051746d6b107b858a8906494b23be", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2016", "end_date": "", "disambiguation": "United States hardcore", "musicbrainz_url": "https://musicbrainz.org/artist/89db292f-793b-43cc-ba1e-45f5af0a19f3"}, {"name": "Tennis Courts", "spotify_url": "https://open.spotify.com/artist/1KiCYjJuX19VhFGFjztXn3", "spotify_id": "1KiCYjJuX19VhFGFjztXn3", "spotify_name": "Tennis Courts", "followers": 1618, "popularity": 9, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174d8c568642e5df8daf199bcc2", "match": "name-search", "type": "Group", "area": "Brooklyn", "begin_area": "Charleston", "begin_date": "2019", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b1925424-ff3b-4280-a79c-0b91becb1a42"}, {"name": "Jay Clifford", "spotify_url": "https://open.spotify.com/artist/1PQhyNE627wR8mPt0WmCqm", "spotify_id": "1PQhyNE627wR8mPt0WmCqm", "spotify_name": "Jay Clifford", "followers": 1560, "popularity": 8, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e0230bbeeec08d371b52592d27c", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/f886ce43-9af9-49d4-ae03-e62caf88712a"}, {"name": "Versus Angels", "spotify_url": "https://open.spotify.com/artist/5qgkCJ1zLU8UWtwsB3U9Mn", "spotify_id": "5qgkCJ1zLU8UWtwsB3U9Mn", "spotify_name": "Versus Angels", "followers": 1344, "popularity": 8, "genres": "christian rock", "image_url": "https://i.scdn.co/image/ab67616d00001e02d791b499027723ce4d8d1410", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "2011", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/52c4e924-ed9a-44bc-889d-a29728110665"}, {"name": "Orange Doors", "spotify_url": "https://open.spotify.com/artist/6C1SEOTeak78Sj1Kdw6sOz", "spotify_id": "6C1SEOTeak78Sj1Kdw6sOz", "spotify_name": "Orange Doors", "followers": 1128, "popularity": 14, "genres": "soft pop", "image_url": "https://i.scdn.co/image/ab67616100005174d443b1178c4667aa38515137", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/81277c8b-2f6f-4204-97c3-786fc78fac22"}, {"name": "Cyprus Hartford", "spotify_url": "https://open.spotify.com/artist/5werR7K8LOrAsxNdvbdwMF", "spotify_id": "5werR7K8LOrAsxNdvbdwMF", "spotify_name": "Cyprus Hartford", "followers": 1101, "popularity": 12, "genres": "folk punk; anti-folk", "image_url": "https://i.scdn.co/image/ab67616100005174b016031379cbd18fe7e1702a", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/8bd6b701-a1d0-49ce-8847-f2212734da96"}, {"name": "Circle Back", "spotify_url": "https://open.spotify.com/artist/4wTDHQU4sImylQiL98EuiX", "spotify_id": "4wTDHQU4sImylQiL98EuiX", "spotify_name": "Circle Back", "followers": 919, "popularity": 2, "genres": "queercore", "image_url": "https://i.scdn.co/image/ab67616100005174b9d1929b909c9d8cdecef0cb", "match": "name-search", "type": "", "area": "", "begin_area": "Charleston", "begin_date": "2013-01-01", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/9f750651-8c8c-4119-9730-c9bcfdc3626a"}, {"name": "DJ Illadell", "spotify_url": "https://open.spotify.com/artist/0l075sMyNQmieDTQCVdolu", "spotify_id": "0l075sMyNQmieDTQCVdolu", "spotify_name": "Dj Illadell", "followers": 901, "popularity": 7, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e0222e2d959ea9db6c62de53b02", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/d69b8f75-ddcc-4200-a524-49c1300e0411"}, {"name": "Michael Flynn", "spotify_url": "https://open.spotify.com/artist/74PGiuaojI71bLDTwlZztZ", "spotify_id": "74PGiuaojI71bLDTwlZztZ", "spotify_name": "Michael Flynn", "followers": 687, "popularity": 2, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051745fc5ed3697deeeba90d55bcf", "match": "name-search", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "Singer/Songwriter, Founding member of Slow Runner", "musicbrainz_url": "https://musicbrainz.org/artist/856cfa7d-927e-472b-8001-f283940bff2f"}, {"name": "Chadwick Johnson", "spotify_url": "https://open.spotify.com/artist/21iVIpVgIhkCIkz7yQfKgV", "spotify_id": "21iVIpVgIhkCIkz7yQfKgV", "spotify_name": "Chadwick Johnson", "followers": 650, "popularity": 18, "genres": "soul blues; classical crossover", "image_url": "https://i.scdn.co/image/ab676161000051748b4992200e8eade116310095", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "vocalist for Hundredth", "musicbrainz_url": "https://musicbrainz.org/artist/2c182a84-1bb4-49c1-8388-96fbfc59083b"}, {"name": "The Moving Star Hall Singers", "spotify_url": "https://open.spotify.com/artist/4YD8WzgSFso8KWjZLK3Zte", "spotify_id": "4YD8WzgSFso8KWjZLK3Zte", "spotify_name": "The Moving Star Hall Singers", "followers": 522, "popularity": 4, "genres": "spoken word", "image_url": "https://i.scdn.co/image/ab67616d00001e024f1f35bf6338ae4c4b977664", "match": "name-search", "type": "Group", "area": "Johns Island", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/4c725e31-43dd-4b3c-810c-9b8cb254f631"}, {"name": "DaShean Porter", "spotify_url": "https://open.spotify.com/artist/3nBIjejG3RLlySSsZFT1Zt", "spotify_id": "3nBIjejG3RLlySSsZFT1Zt", "spotify_name": "DaShean Porter", "followers": 503, "popularity": 2, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517406a226bfb53c6e893fb6febf", "match": "name-search", "type": "Person", "area": "Los Angeles", "begin_area": "Charleston", "begin_date": "1994-05-26", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/d4291ccb-ecb2-421f-a784-0ef871b23a18"}, {"name": "Alan Price & The Modern Day", "spotify_url": "https://open.spotify.com/artist/4CoGyfKSsNnm8W9DUQe75l", "spotify_id": "4CoGyfKSsNnm8W9DUQe75l", "spotify_name": "Alan Price & The Modern Day", "followers": 470, "popularity": 1, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051746f0b4a920143bafdd2de19d0", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "soulful alternative rock band", "musicbrainz_url": "https://musicbrainz.org/artist/f99e4a8e-d3af-47e0-a367-13669f5a2d1e"}, {"name": "Index for Potential Suicide", "spotify_url": "https://open.spotify.com/artist/1C1x24S2OC5718u9y0w3kz", "spotify_id": "1C1x24S2OC5718u9y0w3kz", "spotify_name": "Index For Potential Suicide", "followers": 460, "popularity": 3, "genres": "screamo; mathcore", "image_url": "https://i.scdn.co/image/ab67616d00001e02cd7e087018b7b4549ab48852", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "1998", "end_date": "1999", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/90a6de20-9276-492c-b647-c047a824aeef"}, {"name": "ContraForce", "spotify_url": "https://open.spotify.com/artist/1ZzMx4MO5sfF2VxYHSyCvS", "spotify_id": "1ZzMx4MO5sfF2VxYHSyCvS", "spotify_name": "ContraForce", "followers": 451, "popularity": 1, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e029ecf4aaf2986ba97c8d4e09c", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/6f1ab5cd-3f50-49bf-9e22-9fb52871a879"}, {"name": "nARK", "spotify_url": "https://open.spotify.com/artist/4mjXYIvLlviUNf2BEryIMF", "spotify_id": "4mjXYIvLlviUNf2BEryIMF", "spotify_name": "Nark", "followers": 428, "popularity": 36, "genres": "indie dance; acid house", "image_url": "https://i.scdn.co/image/ab67616100005174d58dc47483c95a76941b5510", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "electronic ambient musician in Charleston, South Carolina", "musicbrainz_url": "https://musicbrainz.org/artist/099ea88e-7774-4ab7-a053-cbfa9ec11c5b"}, {"name": "Florida Man", "spotify_url": "https://open.spotify.com/artist/1djgHKXVrubKVPqWjCkO1H", "spotify_id": "1djgHKXVrubKVPqWjCkO1H", "spotify_name": "Florida Man", "followers": 373, "popularity": 8, "genres": "mathcore; grindcore", "image_url": "https://i.scdn.co/image/ab67616100005174c590bb06ca560cf1ae2eb508", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/e69749b7-cc37-4fd0-a0bf-50554d6ba9e1"}, {"name": "Julian Dash", "spotify_url": "https://open.spotify.com/artist/7p1C6cbN2rgBErzfB1u3Z7", "spotify_id": "7p1C6cbN2rgBErzfB1u3Z7", "spotify_name": "Julian Dash", "followers": 336, "popularity": 8, "genres": "swing music; northern soul", "image_url": "https://i.scdn.co/image/ab67616d00001e02d47aa583e312b7dbfd6406ca", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1916-04-09", "end_date": "1974-02-25", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/310620da-bd3d-4369-be97-09ab7a3e3d4d"}, {"name": "Arthur Freed", "spotify_url": "https://open.spotify.com/artist/49A2uuIj7yUhhJ9pMhRmOb", "spotify_id": "49A2uuIj7yUhhJ9pMhRmOb", "spotify_name": "Arthur Freed", "followers": 325, "popularity": 8, "genres": "", "image_url": "https://i.scdn.co/image/6771d9bbb8afb756a051ea38253daf99fa31f36d", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1894-09-09", "end_date": "1973-04-12", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/80cb9ce6-e1c7-4211-91fa-36cedde0ce66"}, {"name": "Vitne", "spotify_url": "https://open.spotify.com/artist/0FKttHeyLsG6uDX7pIsHXC", "spotify_id": "0FKttHeyLsG6uDX7pIsHXC", "spotify_name": "Vitne", "followers": 317, "popularity": 1, "genres": "norsk rock", "image_url": "https://i.scdn.co/image/ab67616100005174452a20182c33057cccaae18e", "match": "name-search", "type": "Person", "area": "Norway", "begin_area": "Charleston", "begin_date": "????-01-17", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/1e8076e4-160f-409f-a974-973672ad2560"}, {"name": "Serpent Church", "spotify_url": "https://open.spotify.com/artist/4gl7JfxZi2L9CR2qRvo4Mg", "spotify_id": "4gl7JfxZi2L9CR2qRvo4Mg", "spotify_name": "Serpent Church", "followers": 257, "popularity": 0, "genres": "stoner rock; stoner metal; sludge metal", "image_url": "https://i.scdn.co/image/ab6761610000517499c9c674bd73bfff642aa79b", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "2021", "end_date": "", "disambiguation": "Stoner/doom from Charleston, SC", "musicbrainz_url": "https://musicbrainz.org/artist/e034851d-2c0d-4c42-b23c-f9d355851d26"}, {"name": "Rufus Jones", "spotify_url": "https://open.spotify.com/artist/48Uym7gJpfPOZL5zOdUxOC", "spotify_id": "48Uym7gJpfPOZL5zOdUxOC", "spotify_name": "Rufus Jones", "followers": 219, "popularity": 3, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02fd38088a633f595fd5c50a6e", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1936-05-27", "end_date": "1990-04-25", "disambiguation": "drums, aka Speedy Jones", "musicbrainz_url": "https://musicbrainz.org/artist/04a92d42-77a8-4535-b1a5-3450784fa3f3"}, {"name": "Todd Brown", "spotify_url": "https://open.spotify.com/artist/0qxnrufO6hGsB3oXV3Gp9r", "spotify_id": "0qxnrufO6hGsB3oXV3Gp9r", "spotify_name": "Todd Brown", "followers": 196, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174db6117bdb6b79da8ab7bbff3", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "singer/songwriter/producer/engineer in Charleston, SC", "musicbrainz_url": "https://musicbrainz.org/artist/a26fb792-0543-4000-b6e6-6867ebd0a298"}, {"name": "The Silver Bells", "spotify_url": "https://open.spotify.com/artist/3LQRuXm0PiI7ats0lMdAKm", "spotify_id": "3LQRuXm0PiI7ats0lMdAKm", "spotify_name": "The Silver Bells", "followers": 186, "popularity": 24, "genres": "philly soul", "image_url": "https://i.scdn.co/image/ab676161000051743925d7db84a8454ecbdd41a0", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "2006-12-01", "end_date": "", "disambiguation": "Charleston, SC indie pop Holiday band", "musicbrainz_url": "https://musicbrainz.org/artist/006f862a-6e06-4b33-94c3-2d7351a97598"}, {"name": "Inlaws", "spotify_url": "https://open.spotify.com/artist/3cTyfRVwWNf1QnvwXZcQyQ", "spotify_id": "3cTyfRVwWNf1QnvwXZcQyQ", "spotify_name": "Inlaws", "followers": 175, "popularity": 6, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e0294aec26a60c9708e21e6ca29", "match": "name-search", "type": "Group", "area": "", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "Charleston, SC Americana", "musicbrainz_url": "https://musicbrainz.org/artist/fa6975fc-eae0-4867-83c1-9a96b6624968"}, {"name": "DuBose Heyward", "spotify_url": "https://open.spotify.com/artist/2x5eLqRtwnCXFUALSsEitt", "spotify_id": "2x5eLqRtwnCXFUALSsEitt", "spotify_name": "DuBose Heyward", "followers": 167, "popularity": 15, "genres": "musicals", "image_url": "https://i.scdn.co/image/ab67616d00001e02fa41e5fd298d72b7715aaa79", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1885-08-31", "end_date": "1940-06-16", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/82953e0d-464a-4fb8-80fc-78dbf8b49b1b"}, {"name": "Jupiter Down", "spotify_url": "https://open.spotify.com/artist/5oix0C18R33RYrJk3DdSF4", "spotify_id": "5oix0C18R33RYrJk3DdSF4", "spotify_name": "Jupiter Down", "followers": 153, "popularity": 0, "genres": "progressive metal; djent", "image_url": "https://i.scdn.co/image/ab676161000051747904285828fb074651a1200e", "match": "name-search", "type": "Group", "area": "South Carolina", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/a4cf77cd-a5d8-4cde-b828-53b9086128d0"}, {"name": "Drunk Couples", "spotify_url": "https://open.spotify.com/artist/6Lp74qqU22JPT3ybxntuRW", "spotify_id": "6Lp74qqU22JPT3ybxntuRW", "spotify_name": "Drunk Couples", "followers": 151, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02596cc14dd41cfbee4a803bbe", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/0539e4d2-7248-4b40-a82c-40ccb2780538"}, {"name": "Eric Dove", "spotify_url": "https://open.spotify.com/artist/0ExWWHMNke6KDWR5cfaz3A", "spotify_id": "0ExWWHMNke6KDWR5cfaz3A", "spotify_name": "Eric Dove", "followers": 146, "popularity": 0, "genres": "acoustic country", "image_url": "https://i.scdn.co/image/ab67616d00001e0293f8ca3d7dfa9bdab982caf6", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "Ohio", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/5c082af0-f289-4c52-93bf-bf757d056d35"}, {"name": "With the Saints", "spotify_url": "https://open.spotify.com/artist/63NKSCxMlj87GvrJfQYldR", "spotify_id": "63NKSCxMlj87GvrJfQYldR", "spotify_name": "With the Saints", "followers": 146, "popularity": 0, "genres": "pop worship", "image_url": "https://i.scdn.co/image/ab67616100005174c73741992d563b93a0c89839", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "2015-01-21", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/81895a57-c8f8-456c-ae42-983ac04315f0"}, {"name": "Laura Rivers", "spotify_url": "https://open.spotify.com/artist/1RERznU1zznrsx3V6bI7rU", "spotify_id": "1RERznU1zznrsx3V6bI7rU", "spotify_name": "Laura Rivers", "followers": 144, "popularity": 2, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Johns Island", "begin_area": "", "begin_date": "1905", "end_date": "1991", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/9fd99394-e165-4c85-a718-5548cf9ec0fa"}, {"name": "Narvin Kimball", "spotify_url": "https://open.spotify.com/artist/0P7taret1PsUMeLPmY9QsK", "spotify_id": "0P7taret1PsUMeLPmY9QsK", "spotify_name": "Narvin Kimball", "followers": 137, "popularity": 2, "genres": "brass band; ragtime", "image_url": "https://i.scdn.co/image/ab67616d00001e0226f5adda0efb8e78b16e175d", "match": "name-search", "type": "Person", "area": "New Orleans", "begin_area": "New Orleans", "begin_date": "1909-03-02", "end_date": "2006-03-17", "disambiguation": "aka Henry Kimball, Jr.", "musicbrainz_url": "https://musicbrainz.org/artist/2480fd80-ea8f-4fe4-98bb-a9921270fcf9"}, {"name": "The Allusions", "spotify_url": "https://open.spotify.com/artist/4U30RKH4it4kdxwQchOe6M", "spotify_id": "4U30RKH4it4kdxwQchOe6M", "spotify_name": "The Allusions", "followers": 137, "popularity": 1, "genres": "garage rock", "image_url": "https://i.scdn.co/image/ab67616d00001e0216240be0fe57c5d952a3d510", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "60s garage rock band from Charleston, SC", "musicbrainz_url": "https://musicbrainz.org/artist/86511494-41ff-4288-a93c-f6c06fc17f13"}, {"name": "Big Stoner Creek", "spotify_url": "https://open.spotify.com/artist/5Zv4MkGYuWURexafQFY1oC", "spotify_id": "5Zv4MkGYuWURexafQFY1oC", "spotify_name": "Big Stoner Creek", "followers": 136, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174aa287342177e9ea4ad64f691", "match": "name-search", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/6e6fbcd1-f259-4a10-9407-c47cba8d84d5"}, {"name": "Taylor Festival Choir", "spotify_url": "https://open.spotify.com/artist/2orIFECsEmdBkKTf3MA5QV", "spotify_id": "2orIFECsEmdBkKTf3MA5QV", "spotify_name": "Taylor Festival Choir", "followers": 131, "popularity": 2, "genres": "celtic; choral", "image_url": "https://i.scdn.co/image/ab676161000051742d03ecd73b274f0f022f11d3", "match": "name-search", "type": "Choir", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2001", "end_date": "", "disambiguation": "Charleston, SC", "musicbrainz_url": "https://musicbrainz.org/artist/28dc6f8a-dfee-4652-83ca-2404268b736c"}, {"name": "Shrimp City Slim", "spotify_url": "https://open.spotify.com/artist/0VFmshuvojTHlY7ZHle39a", "spotify_id": "0VFmshuvojTHlY7ZHle39a", "spotify_name": "Shrimp City Slim", "followers": 126, "popularity": 1, "genres": "pop soul", "image_url": "https://i.scdn.co/image/ab67616d00001e02dabfa45e315694ee7426d21a", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "Chicago", "begin_date": "1953", "end_date": "", "disambiguation": "Blues singer-songwriter", "musicbrainz_url": "https://musicbrainz.org/artist/327d1f3c-1e07-4b55-9ef7-b66876127e2f"}, {"name": "Robert Jordan", "spotify_url": "https://open.spotify.com/artist/1kalNjRIZFi1i14bbvbLUx", "spotify_id": "1kalNjRIZFi1i14bbvbLUx", "spotify_name": "Robert Jordan", "followers": 119, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02b6376345ec4ae361605d91a2", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1948-10-17", "end_date": "2007-09-16", "disambiguation": "author", "musicbrainz_url": "https://musicbrainz.org/artist/0096b09f-b79f-4a1e-aeb0-c5fbb7a2a2dd"}, {"name": "Lou Marini", "spotify_url": "https://open.spotify.com/artist/00ZTAsa0Xy47elbgzI9yBg", "spotify_id": "00ZTAsa0Xy47elbgzI9yBg", "spotify_name": "Lou Marini", "followers": 116, "popularity": 8, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02322f3698eb50176b3515270f", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1945-05-13", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/fbd921a4-c4a7-41be-8e79-0976ee83bf4d"}, {"name": "Telize", "spotify_url": "https://open.spotify.com/artist/6LP4wlNyoV2Ewkv39c7k2C", "spotify_id": "6LP4wlNyoV2Ewkv39c7k2C", "spotify_name": "Telize", "followers": 114, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051742fc83455ad918a6b687d978b", "match": "name-search", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1993-10-08", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/bec6fc3c-59d9-4aa9-8cd4-15c60243022d"}, {"name": "Jarmar Alu", "spotify_url": "https://open.spotify.com/artist/3TJOOn8DstJnBqGyRTlWRi", "spotify_id": "3TJOOn8DstJnBqGyRTlWRi", "spotify_name": "Jarmar Alu", "followers": 112, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174b825d677095220466c76388c", "match": "name-search", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1989-11-20", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/fe1aa6f2-6164-43a3-bb4a-87704cefe29b"}, {"name": "YR LAD", "spotify_url": "https://open.spotify.com/artist/6zPbfZV4nf0fUoTIz1v9xG", "spotify_id": "6zPbfZV4nf0fUoTIz1v9xG", "spotify_name": "Yr Lad", "followers": 111, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517474622ef423334b5285dd8b85", "match": "name-search", "type": "", "area": "", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/411ce9fc-6bce-4753-8bae-1f0cc5f0da5d"}, {"name": "Charleston Symphony Orchestra", "spotify_url": "https://open.spotify.com/artist/4hvYTTNcuUDcAkDTnuTZGI", "spotify_id": "4hvYTTNcuUDcAkDTnuTZGI", "spotify_name": "Charleston Symphony Orchestra", "followers": 92, "popularity": 7, "genres": "concerto", "image_url": "https://i.scdn.co/image/ab67616d00001e024f87058b9304506f9ee47aea", "match": "name-search", "type": "Orchestra", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/4826b9b3-4109-4248-b627-b48b3ecf4c5d"}, {"name": "Jeanette Kimball", "spotify_url": "https://open.spotify.com/artist/1hVdKB9owxq0737rs0JZyD", "spotify_id": "1hVdKB9owxq0737rs0JZyD", "spotify_name": "Jeanette Kimball", "followers": 91, "popularity": 10, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "", "begin_date": "1906-12-18", "end_date": "2001-03-28", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b83a381c-1bb6-45bc-a8e4-ad13ac6e618b"}, {"name": "Inn Vinegar", "spotify_url": "https://open.spotify.com/artist/61Oug9Qos9G7bhAICQdzX4", "spotify_id": "61Oug9Qos9G7bhAICQdzX4", "spotify_name": "Inn Vinegar", "followers": 89, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051749ddda1a5a04e41005a4ea2a9", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "United States", "begin_date": "", "end_date": "", "disambiguation": "US Prog Rock / Jazz Fusion Group", "musicbrainz_url": "https://musicbrainz.org/artist/3ef1b284-c994-4845-9712-a4ce8e99c2aa"}, {"name": "Matt Chase", "spotify_url": "https://open.spotify.com/artist/6xnA8IiruJwR4roxKoWRLq", "spotify_id": "6xnA8IiruJwR4roxKoWRLq", "spotify_name": "Matt Chase", "followers": 88, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051747f2849c5be0430a533d8534d", "match": "name-search", "type": "Person", "area": "Nashville", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "country songwriter", "musicbrainz_url": "https://musicbrainz.org/artist/b975488c-3a7d-4d94-af50-4e744e96cfbf"}, {"name": "tape loop", "spotify_url": "https://open.spotify.com/artist/0lnnLn2ldpb0WOlF4mqdIX", "spotify_id": "0lnnLn2ldpb0WOlF4mqdIX", "spotify_name": "tape loop", "followers": 85, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051745cf5d4a5b712be792cdb6d0f", "match": "name-search", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/0530402e-acd0-49eb-9146-4435a845d8ce"}, {"name": "Bill Carson", "spotify_url": "https://open.spotify.com/artist/04R5tFfQIsijrL8NF6fQPo", "spotify_id": "04R5tFfQIsijrL8NF6fQPo", "spotify_name": "Bill Carson", "followers": 80, "popularity": 2, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174d3cf19603df3172cf1ba38f9", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "guitarist; New Music Collective", "musicbrainz_url": "https://musicbrainz.org/artist/4d977a4a-94c0-46c6-ae54-3a25c767ddfb"}, {"name": "Bill Carson", "spotify_url": "https://open.spotify.com/artist/04R5tFfQIsijrL8NF6fQPo", "spotify_id": "04R5tFfQIsijrL8NF6fQPo", "spotify_name": "Bill Carson", "followers": 80, "popularity": 2, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174d3cf19603df3172cf1ba38f9", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "1976", "end_date": "", "disambiguation": "singer/songwriter from Charleston, SC", "musicbrainz_url": "https://musicbrainz.org/artist/b8eaa1c8-c0a5-48f0-8a9e-a90bc79241c1"}, {"name": "Granola Sam", "spotify_url": "https://open.spotify.com/artist/1p9ZlgZgnPHYWr99MJoPQr", "spotify_id": "1p9ZlgZgnPHYWr99MJoPQr", "spotify_name": "Granola Sam", "followers": 79, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051744bfe19b9169e45bc41b127eb", "match": "name-search", "type": "Person", "area": "Los Angeles", "begin_area": "Charleston", "begin_date": "1997-01-16", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/22efd721-1812-4644-8e96-efcfc31bd208"}, {"name": "Cliff Smalls", "spotify_url": "https://open.spotify.com/artist/4jrH4hylw9XHQiFh2quXAg", "spotify_id": "4jrH4hylw9XHQiFh2quXAg", "spotify_name": "Cliff Smalls", "followers": 75, "popularity": 3, "genres": "jazz ballads", "image_url": "https://i.scdn.co/image/ab67616d00001e024b01327c1a05e4095b623168", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1918-03-03", "end_date": "2008", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/d2d823fb-d361-414e-938f-00e9893d20eb"}, {"name": "Tom Delaney", "spotify_url": "https://open.spotify.com/artist/6aZWicxqUeSZN0IcbRwv74", "spotify_id": "6aZWicxqUeSZN0IcbRwv74", "spotify_name": "Tom Delaney", "followers": 73, "popularity": 2, "genres": "classic blues; ragtime", "image_url": "https://i.scdn.co/image/ab67616d00001e027ce4e035a94ec0d1fac91e69", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1889-09-14", "end_date": "1963-12-16", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/982f0e5c-edad-467a-bc9d-7189d373450d"}, {"name": "Will Goss", "spotify_url": "https://open.spotify.com/artist/0cgOHYCK8I2zEqJfNvwLPN", "spotify_id": "0cgOHYCK8I2zEqJfNvwLPN", "spotify_name": "Will Goss", "followers": 71, "popularity": 1, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174da972d9d8e0b2497f18eaa53", "match": "name-search", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/29b954e5-d81b-440d-9141-4173a9934e3c"}, {"name": "Will Hudson", "spotify_url": "https://open.spotify.com/artist/72rxGCi09MTvlDO3mtLNEw", "spotify_id": "72rxGCi09MTvlDO3mtLNEw", "spotify_name": "Will Hudson", "followers": 71, "popularity": 24, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Barstow", "begin_date": "1908-03-08", "end_date": "1981-07-16", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/2344f604-7b3e-4e45-a770-1226521487b7"}, {"name": "Fud Livingston", "spotify_url": "https://open.spotify.com/artist/6Q7BstsIbwMaiMFmIAdet2", "spotify_id": "6Q7BstsIbwMaiMFmIAdet2", "spotify_name": "Fud Livingston", "followers": 70, "popularity": 1, "genres": "big band", "image_url": "https://i.scdn.co/image/ab67616d00001e0282a7e81bc83855dec374fa39", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1906-04-10", "end_date": "1957-03-25", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/cd6f31f9-2dc5-4854-85ba-77b6a92d6c7c"}, {"name": "Kim Larson", "spotify_url": "https://open.spotify.com/artist/28r50vQ4lpemNpXHy2FzFR", "spotify_id": "28r50vQ4lpemNpXHy2FzFR", "spotify_name": "Kim Larson", "followers": 69, "popularity": 6, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "clarinetist", "musicbrainz_url": "https://musicbrainz.org/artist/136ec910-a68b-4822-8f97-092b73dad9ac"}, {"name": "Arpy G.", "spotify_url": "https://open.spotify.com/artist/1z2aFqzcjgaJ87UF0uMTn5", "spotify_id": "1z2aFqzcjgaJ87UF0uMTn5", "spotify_name": "Arpy G.", "followers": 68, "popularity": 1, "genres": "grindcore", "image_url": "https://i.scdn.co/image/ab67616100005174dc5e47432a366f21502cc875", "match": "name-search", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b83d50ae-94c9-455e-ba69-b97ae0f6c27c"}, {"name": "Lost Cosmonauts", "spotify_url": "https://open.spotify.com/artist/5SVrZEu50T4plC4A0dJzPQ", "spotify_id": "5SVrZEu50T4plC4A0dJzPQ", "spotify_name": "Lost Cosmonauts", "followers": 68, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02f768359cf70116cb179fdc3f", "match": "name-search", "type": "Group", "area": "", "begin_area": "Charleston", "begin_date": "2017-09-01", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/85b362a8-2c5d-43a8-a428-52a9af38a749"}, {"name": "Aine Burns", "spotify_url": "https://open.spotify.com/artist/2YO7UDjRwu6oFYXDQxVfOz", "spotify_id": "2YO7UDjRwu6oFYXDQxVfOz", "spotify_name": "Aine Burns", "followers": 64, "popularity": 5, "genres": "bluegrass; newgrass", "image_url": "https://i.scdn.co/image/ab67616d00001e026ffe3011e834005103449922", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "County Donegal", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/e82a857a-7b56-434a-a3cc-db385ff611c8"}, {"name": "Snargle", "spotify_url": "https://open.spotify.com/artist/5007tTw9vjBmQeRRckQZYT", "spotify_id": "5007tTw9vjBmQeRRckQZYT", "spotify_name": "Snargle", "followers": 64, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051742ee48d6b51c7970da0b38406", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/91a34e3f-52b7-4f2a-8e5a-da21b76fee71"}, {"name": "lavun", "spotify_url": "https://open.spotify.com/artist/3sT6pi2Fv4NtVCIbwGPMfj", "spotify_id": "3sT6pi2Fv4NtVCIbwGPMfj", "spotify_name": "lavun", "followers": 60, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174a823676ebc6cc2d08338b0df", "match": "name-search", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "2006-08-11", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/a2917a0a-318e-44f1-ba59-97449c17f3fd"}, {"name": "Joey Morant", "spotify_url": "https://open.spotify.com/artist/0A58VZPLvoBiIABt3Vwdyc", "spotify_id": "0A58VZPLvoBiIABt3Vwdyc", "spotify_name": "Joey Morant", "followers": 59, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e0242a4e5eec90abbaeef011cf6", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1938-08-11", "end_date": "2021-07-29", "disambiguation": "jazz trumpeter", "musicbrainz_url": "https://musicbrainz.org/artist/49053e27-ec1a-4b5e-80c7-2ba6fe069175"}, {"name": "Trolgar", "spotify_url": "https://open.spotify.com/artist/3Ugn09v0Xp9b177gNdLUd2", "spotify_id": "3Ugn09v0Xp9b177gNdLUd2", "spotify_name": "Trolgar", "followers": 59, "popularity": 0, "genres": "celtic; tekno", "image_url": "https://i.scdn.co/image/ab67616d00001e02295a58cc360e4559f378105e", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "Troll metal band from Charleston, SC", "musicbrainz_url": "https://musicbrainz.org/artist/7d8d3089-7aaf-42f0-88b0-90aa2500e3e8"}, {"name": "Mercury Rhodes", "spotify_url": "https://open.spotify.com/artist/5FLGCtfsWfpeNuVcttzl9C", "spotify_id": "5FLGCtfsWfpeNuVcttzl9C", "spotify_name": "Mercury Rhodes", "followers": 58, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517449be89f1475289aa58ef357f", "match": "name-search", "type": "Person", "area": "", "begin_area": "North Charleston", "begin_date": "1991-03-01", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/1063fc33-17e1-4ed5-a114-94b5f63076fe"}, {"name": "The Aquarians", "spotify_url": "https://open.spotify.com/artist/4AKVELb1aIpNn9IfqrGcGf", "spotify_id": "4AKVELb1aIpNn9IfqrGcGf", "spotify_name": "The Aquarians", "followers": 58, "popularity": 0, "genres": "space rock; psychedelic rock", "image_url": "https://i.scdn.co/image/ab67616d00001e020819b0e490a33f1217725f39", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Hollywood", "begin_date": "", "end_date": "", "disambiguation": "US Jazz Pop, Latin Jazz band", "musicbrainz_url": "https://musicbrainz.org/artist/e93eab07-0011-4947-b536-c35ee805209f"}, {"name": "The Monsters From Outer Space", "spotify_url": "https://open.spotify.com/artist/1tcICtqLbXDD0f4pI8qPOv", "spotify_id": "1tcICtqLbXDD0f4pI8qPOv", "spotify_name": "The Monsters from Outer Space", "followers": 58, "popularity": 0, "genres": "horror punk; deathrock", "image_url": "https://i.scdn.co/image/ab676161000051742dd55cb370bff03c2e9480f3", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/a07d018a-c178-4ebf-b64e-6570ee276f82"}, {"name": "Tripping the Mechanism", "spotify_url": "https://open.spotify.com/artist/6Ggy7dKnHIqsI4fLYkmQKs", "spotify_id": "6Ggy7dKnHIqsI4fLYkmQKs", "spotify_name": "Tripping the Mechanism", "followers": 56, "popularity": 0, "genres": "doom metal", "image_url": "https://i.scdn.co/image/ab67616d00001e0220e698fc2b99dc11f6191df7", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/84ffc540-fa07-4c39-947a-f1c8834ce0e9"}, {"name": "Hale Bopp Astronauts", "spotify_url": "https://open.spotify.com/artist/2bSEBt0KXTNHcna37Ce0mJ", "spotify_id": "2bSEBt0KXTNHcna37Ce0mJ", "spotify_name": "Hale Bopp Astronauts", "followers": 54, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517463ec24a669fcd4de7e7631e9", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/d65cdf1d-a62a-4a9d-a053-040eae94abba"}, {"name": "Chuck Murphy", "spotify_url": "https://open.spotify.com/artist/2DdFAZoJ8xMUvg6355SxQg", "spotify_id": "2DdFAZoJ8xMUvg6355SxQg", "spotify_name": "Chuck Murphy", "followers": 52, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174e3df606b0589e18361788c93", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Montgomery", "begin_date": "1922-03-07", "end_date": "2001-08-18", "disambiguation": "1950s Country/Honky Tonk artist", "musicbrainz_url": "https://musicbrainz.org/artist/21eeafc3-c2f9-4c3f-a870-fdef8a4a2a60"}, {"name": "Stella by Starlight", "spotify_url": "https://open.spotify.com/artist/5gZoWgLQNyDMVKpH1WKsbv", "spotify_id": "5gZoWgLQNyDMVKpH1WKsbv", "spotify_name": "Stella By Starlight", "followers": 52, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02133a0ef4560c438cbf10120f", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2006", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/c0e2a7b0-1476-4d9a-84d0-99d03c0cfa65"}, {"name": "Charles Theodore Pachelbel", "spotify_url": "https://open.spotify.com/artist/3ppfukBOVLZswrrTQyqvhA", "spotify_id": "3ppfukBOVLZswrrTQyqvhA", "spotify_name": "Charles Theodore Pachelbel", "followers": 49, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Germany", "begin_area": "Stuttgart", "begin_date": "1690-11-24", "end_date": "1750-09-15", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/3ac46bb0-2ba8-4f3e-9c55-92c2d1ad0f2f"}, {"name": "JAVA JAY", "spotify_url": "https://open.spotify.com/artist/0azX8EZRRvXohvy8aOnta5", "spotify_id": "0azX8EZRRvXohvy8aOnta5", "spotify_name": "JAVA JAY", "followers": 47, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174126db9b2881c3e2b62087d82", "match": "name-search", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1988-09-23", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/de515c9d-45b0-4077-87ea-2823b5369134"}, {"name": "John Shields", "spotify_url": "https://open.spotify.com/artist/4ErOLiB62E5v74vNd9biFX", "spotify_id": "4ErOLiB62E5v74vNd9biFX", "spotify_name": "John Shields", "followers": 47, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e026392fc3ca7de1f9a11f9b764", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "Philadelphia", "begin_date": "", "end_date": "", "disambiguation": "1/2 of Little Stranger", "musicbrainz_url": "https://musicbrainz.org/artist/8aa6eec1-13b6-4e10-ba4d-10012de726b9"}, {"name": "Kid Twist", "spotify_url": "https://open.spotify.com/artist/1BXF3KvRh7OwHz7nw9hmkA", "spotify_id": "1BXF3KvRh7OwHz7nw9hmkA", "spotify_name": "Kid Twist", "followers": 47, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e027db8c5f0e093a71bb6885971", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "Charleston", "begin_date": "1969-03-13", "end_date": "", "disambiguation": "Alternative songwriter", "musicbrainz_url": "https://musicbrainz.org/artist/67bdda1a-9793-4d1a-aa49-dc66d191124f"}, {"name": "The Archetypes", "spotify_url": "https://open.spotify.com/artist/04vNCr2oGLfa1XwNUagwNP", "spotify_id": "04vNCr2oGLfa1XwNUagwNP", "spotify_name": "The Archetypes", "followers": 38, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab6761610000517470bab7a36a0b5b711d5b4719", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/60e193bc-91f6-4b39-a5f0-7c00585a9002"}, {"name": "Grace Church Choir", "spotify_url": "https://open.spotify.com/artist/4raUieNZUKYhoSP8RL28dh", "spotify_id": "4raUieNZUKYhoSP8RL28dh", "spotify_name": "Grace Church Choir", "followers": 34, "popularity": 0, "genres": "choral", "image_url": "https://i.scdn.co/image/ab67616d00001e0255d541b8da28c939404cfb44", "match": "name-search", "type": "Choir", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/3d33f954-2508-4f9c-bf09-4fad8e400d4e"}, {"name": "Joel Herron", "spotify_url": "https://open.spotify.com/artist/5g1pcrRWp7SXTZTvJ0OJyF", "spotify_id": "5g1pcrRWp7SXTZTvJ0OJyF", "spotify_name": "Joel Herron", "followers": 32, "popularity": 1, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Chicago", "begin_date": "1916-01-17", "end_date": "2012-01-30", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b88fc8fa-7206-4f80-9d6a-141b05c295fe"}, {"name": "Quentin Baxter", "spotify_url": "https://open.spotify.com/artist/3Y89pBxhMVkFWtkA62yAPU", "spotify_id": "3Y89pBxhMVkFWtkA62yAPU", "spotify_name": "QUENTIN BAXTER", "followers": 27, "popularity": 2, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1971-08-28", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/bfeced90-8026-4293-b8c4-5c9e7bbb223c"}, {"name": "Nathan Michel", "spotify_url": "https://open.spotify.com/artist/4A8nWexSgn1CLKjgtyGAdK", "spotify_id": "4A8nWexSgn1CLKjgtyGAdK", "spotify_name": "Nathan Michel", "followers": 25, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051745162aeb0d6fbfb256af2a0e6", "match": "name-search", "type": "Person", "area": "Brooklyn", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "American experimental electronic musician", "musicbrainz_url": "https://musicbrainz.org/artist/baabed19-ce37-4c8d-a794-474a37991dc4"}, {"name": "The Followers Of Christ", "spotify_url": "https://open.spotify.com/artist/17EDJug1MUzxGDJEO3WEEj", "spotify_id": "17EDJug1MUzxGDJEO3WEEj", "spotify_name": "The Followers of Christ", "followers": 25, "popularity": 3, "genres": "", "image_url": "", "match": "name-search", "type": "Choir", "area": "", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/02d5f5ab-2a46-4df1-8d34-39c1513c5514"}, {"name": "Skwzbxx", "spotify_url": "https://open.spotify.com/artist/6DpHLqsbH8JqSWCOfsEu5R", "spotify_id": "6DpHLqsbH8JqSWCOfsEu5R", "spotify_name": "SKWZBXX", "followers": 24, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02666a41045ba060ec4befd849", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/2d82dd65-2858-4b98-8acb-ed189f1c78de"}, {"name": "Janie Hunter", "spotify_url": "https://open.spotify.com/artist/6F2WquFQyYVcm4ib0HQ4v2", "spotify_id": "6F2WquFQyYVcm4ib0HQ4v2", "spotify_name": "Janie Hunter", "followers": 22, "popularity": 1, "genres": "spoken word", "image_url": "", "match": "name-search", "type": "Person", "area": "Johns Island", "begin_area": "", "begin_date": "1918-06-07", "end_date": "1997-06-14", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/33dbdcff-9a84-4c4a-bc03-27719337cad6"}, {"name": "ArcazeOnTheBeat", "spotify_url": "https://open.spotify.com/artist/5t2nrp2mq6Wbonvz5HmkBW", "spotify_id": "5t2nrp2mq6Wbonvz5HmkBW", "spotify_name": "ArcazeOnTheBeat", "followers": 19, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "North Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/d48a7e2b-c44c-4dcc-bb6d-de2edcab3671"}, {"name": "Steve Fletcher", "spotify_url": "https://open.spotify.com/artist/1r0AFP68PFvLB9trMrnG7T", "spotify_id": "1r0AFP68PFvLB9trMrnG7T", "spotify_name": "Steve Fletcher", "followers": 19, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "folk rock", "musicbrainz_url": "https://musicbrainz.org/artist/5813deb3-1474-4e33-b2d5-fa984b241321"}, {"name": "Grover Windham", "spotify_url": "https://open.spotify.com/artist/6DEPU0EEAhWpIU2FOjP3q3", "spotify_id": "6DEPU0EEAhWpIU2FOjP3q3", "spotify_name": "Grover Windham", "followers": 18, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02cde1aa65317bd6e51648b14c", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "????-09-22", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/82de6220-963d-4937-b7a7-ec5a415db83e"}, {"name": "Daniel Snell", "spotify_url": "https://open.spotify.com/artist/4W8njGN69OH77y0kgJSWRX", "spotify_id": "4W8njGN69OH77y0kgJSWRX", "spotify_name": "Daniel Snell", "followers": 17, "popularity": 10, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "Easley", "begin_date": "", "end_date": "", "disambiguation": "Tour Manager for Little Stranger & Hippie Sabotage", "musicbrainz_url": "https://musicbrainz.org/artist/45510767-8e09-473e-8b4c-0ed5f5fd5cac"}, {"name": "Edmund Jenkins", "spotify_url": "https://open.spotify.com/artist/3pU18yKS8aStvF2CK5I8Fg", "spotify_id": "3pU18yKS8aStvF2CK5I8Fg", "spotify_name": "Edmund Jenkins", "followers": 17, "popularity": 0, "genres": "vocal jazz", "image_url": "https://i.scdn.co/image/ab67616d00001e020e3cd56dd4f1c4e02ab63917", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1894-04-09", "end_date": "1926-09-12", "disambiguation": "US composer", "musicbrainz_url": "https://musicbrainz.org/artist/90f91790-c22f-44fd-a6aa-b57dcb17171e"}, {"name": "Washboard Doc", "spotify_url": "https://open.spotify.com/artist/696eBwULw48eN3X32Srh1U", "spotify_id": "696eBwULw48eN3X32Srh1U", "spotify_name": "Washboard Doc", "followers": 17, "popularity": 0, "genres": "country blues", "image_url": "", "match": "name-search", "type": "Person", "area": "", "begin_area": "Johns Island", "begin_date": "1911-09-08", "end_date": "1988-09-16", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/537f74e9-4050-435c-a25c-bf17a0f879e5"}, {"name": "Shepard Fairey", "spotify_url": "https://open.spotify.com/artist/3E7qq012kIvb6OI6Z9Msr3", "spotify_id": "3E7qq012kIvb6OI6Z9Msr3", "spotify_name": "Shepard Fairey", "followers": 16, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02966637e0cdc71682d6bc4bb0", "match": "name-search", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1970-02-15", "end_date": "", "disambiguation": "Graphic Art & Design", "musicbrainz_url": "https://musicbrainz.org/artist/bcb4cde1-839d-43f4-919a-91f64d4b5bf0"}, {"name": "Sleepy Jeffers", "spotify_url": "https://open.spotify.com/artist/5UkwhDn8gJLBDXZ4MIWURK", "spotify_id": "5UkwhDn8gJLBDXZ4MIWURK", "spotify_name": "Sleepy Jeffers", "followers": 15, "popularity": 0, "genres": "rockabilly", "image_url": "", "match": "name-search", "type": "Person", "area": "West Virginia", "begin_area": "Scott County", "begin_date": "1922-02-15", "end_date": "1992-11-25", "disambiguation": "George Ivan \u201cSleepy\u201d Jeffers", "musicbrainz_url": "https://musicbrainz.org/artist/f5a0d140-edc3-467c-96cc-9f362443507c"}, {"name": "The Rooibos Quartet", "spotify_url": "https://open.spotify.com/artist/2S3xpxTumF8Lsv6F5DqSoT", "spotify_id": "2S3xpxTumF8Lsv6F5DqSoT", "spotify_name": "The Rooibos Quartet", "followers": 15, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02f4e07019753e136a44ddcd55", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/cc73456b-3c9c-4e8f-a761-7044053adcf8"}, {"name": "Terry Williams", "spotify_url": "https://open.spotify.com/artist/520fosbvV8F0qohsDyl5pM", "spotify_id": "520fosbvV8F0qohsDyl5pM", "spotify_name": "Terry Williams", "followers": 14, "popularity": 1, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02101e1cf41e131944ec197091", "match": "name-search", "type": "Person", "area": "", "begin_area": "Hollywood", "begin_date": "1947-06-06", "end_date": "", "disambiguation": "American singer-songwriter", "musicbrainz_url": "https://musicbrainz.org/artist/31cd4ac8-3c59-4620-bc75-c3cac6db93b4"}, {"name": "Shrimp Records Family Band", "spotify_url": "https://open.spotify.com/artist/71qUunRM6IpEDsglJmhYXz", "spotify_id": "71qUunRM6IpEDsglJmhYXz", "spotify_name": "Shrimp Records Family Band", "followers": 12, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/e94b25b2-9339-4e1b-965d-290731a8fa4c"}, {"name": "ZachontheTrack", "spotify_url": "https://open.spotify.com/artist/4QyDiwczjHI3GYl6b3ktbM", "spotify_id": "4QyDiwczjHI3GYl6b3ktbM", "spotify_name": "ZachOnTheTrack", "followers": 10, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "songwriter, producer", "musicbrainz_url": "https://musicbrainz.org/artist/f3c8baa0-8bf3-4ab8-869f-2b5d8c9ee662"}, {"name": "Brandon Nichols", "spotify_url": "https://open.spotify.com/artist/2c22jNOcna9Qlkug32MoUp", "spotify_id": "2c22jNOcna9Qlkug32MoUp", "spotify_name": "Brandon Nichols", "followers": 8, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e022f3f2291366c253b1d785fa1", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/2b9ed89e-2195-4d41-8039-3711836497cf"}, {"name": "Crotch Rot", "spotify_url": "https://open.spotify.com/artist/1XrdBUU5Mu9OOnpuyhs8Kh", "spotify_id": "1XrdBUU5Mu9OOnpuyhs8Kh", "spotify_name": "CROTCH ROT", "followers": 8, "popularity": 1, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02e6e50a02a197845cf2e3b5d8", "match": "name-search", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "punk band from Charleston, South Carolina", "musicbrainz_url": "https://musicbrainz.org/artist/a6f27fac-8810-49bc-b88d-85aac0f1bec5"}, {"name": "Josh Roberts and the Hinges", "spotify_url": "https://open.spotify.com/artist/6AC37psE2Ylfd0TAjx0y1S", "spotify_id": "6AC37psE2Ylfd0TAjx0y1S", "spotify_name": "Josh Roberts and the Hinges", "followers": 8, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02c324902b2f6ffd9419149eae", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/f52f55cb-7c9a-4d40-a6c8-634d3cb04527"}, {"name": "weluvj", "spotify_url": "https://open.spotify.com/artist/7vrSlQLUV2BE1IW8pOhxky", "spotify_id": "7vrSlQLUV2BE1IW8pOhxky", "spotify_name": "weluvj", "followers": 8, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e021d739207cb5cadfb4207dde1", "match": "name-search", "type": "", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2009-07-24", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/cb570dd1-659c-4c72-9411-1e5d7b089177"}, {"name": "Ron Wiltrout", "spotify_url": "https://open.spotify.com/artist/3vjHhERC3CwBrNQhsYJ47o", "spotify_id": "3vjHhERC3CwBrNQhsYJ47o", "spotify_name": "Ron Wiltrout", "followers": 7, "popularity": 0, "genres": "contemporary classical; choral", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "percussionist", "musicbrainz_url": "https://musicbrainz.org/artist/6ea7495b-71b8-4190-bfa4-8cc96751b3cd"}, {"name": "Willie Smith", "spotify_url": "https://open.spotify.com/artist/4EOkL7NoVnWh3feUnpk1Xx", "spotify_id": "4EOkL7NoVnWh3feUnpk1Xx", "spotify_name": "Willie Smith", "followers": 5, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1910-11-25", "end_date": "1967-03-07", "disambiguation": "US jazz alto saxophonist, 1910-1967", "musicbrainz_url": "https://musicbrainz.org/artist/2a3fb3ab-fc87-4094-9bfb-64640aa183a6"}, {"name": "Benjamin Bligen", "spotify_url": "https://open.spotify.com/artist/0rMNu78fAuwE2CGtuB9eah", "spotify_id": "0rMNu78fAuwE2CGtuB9eah", "spotify_name": "Benjamin Bligen", "followers": 4, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Johns Island", "begin_area": "", "begin_date": "", "end_date": "2007-01-27", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/a95d3cda-7a72-4f32-9ba4-b695b504b8af"}, {"name": "Ruth Bligen", "spotify_url": "https://open.spotify.com/artist/5PYsoyJN4UpZecZGynpeyq", "spotify_id": "5PYsoyJN4UpZecZGynpeyq", "spotify_name": "Ruth Bligen", "followers": 4, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Johns Island", "begin_area": "", "begin_date": "", "end_date": "2012-03-17", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/21acdbd1-eacf-4c4b-ad59-6fa57816954f"}, {"name": "William Clarke", "spotify_url": "https://open.spotify.com/artist/3wmNqx4LzapeByz8Q6WV4A", "spotify_id": "3wmNqx4LzapeByz8Q6WV4A", "spotify_name": "William Clarke", "followers": 4, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "flautist", "musicbrainz_url": "https://musicbrainz.org/artist/326e8531-5035-4db4-a38c-a061e48311d1"}, {"name": "Ashley Holt", "spotify_url": "https://open.spotify.com/artist/3PLkuMhBZeArLXgnaZtq0L", "spotify_id": "3PLkuMhBZeArLXgnaZtq0L", "spotify_name": "Ashley Holt", "followers": 3, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e021c350ae466a873923dbf2b67", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "Caricature Illustrator, Musician", "musicbrainz_url": "https://musicbrainz.org/artist/338760b1-ff3a-439a-aa30-bfe3848ed09a"}, {"name": "dondidit", "spotify_url": "https://open.spotify.com/artist/0Ka00S5RjPF3CiZOAvmUWJ", "spotify_id": "0Ka00S5RjPF3CiZOAvmUWJ", "spotify_name": "dondidit", "followers": 3, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab676161000051747af18c13ff5cdc9b3e286618", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "2002-03-13", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/86ef0f62-7934-4e73-bcff-16968a344d38"}, {"name": "Esau Jenkins", "spotify_url": "https://open.spotify.com/artist/6bjUenx1ZsJ9vcgiAAgugq", "spotify_id": "6bjUenx1ZsJ9vcgiAAgugq", "spotify_name": "Esau Jenkins", "followers": 3, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Johns Island", "begin_date": "1910-07-03", "end_date": "1972-10-30", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/e38abd6f-5532-4758-ac61-301eb75571ff"}, {"name": "Abe White", "spotify_url": "https://open.spotify.com/artist/2Tf0Oyd9jdpFjIbvUvmIy0", "spotify_id": "2Tf0Oyd9jdpFjIbvUvmIy0", "spotify_name": "Abe White", "followers": 2, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e025d7b415d772e3c4ba406094e", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1935", "end_date": "", "disambiguation": "US jazz saxophonist", "musicbrainz_url": "https://musicbrainz.org/artist/fdc2e51f-2fc1-442a-aa7a-756e86de296a"}, {"name": "wherehouses", "spotify_url": "https://open.spotify.com/artist/1VN4hUiAyoUzX03IHEH75n", "spotify_id": "1VN4hUiAyoUzX03IHEH75n", "spotify_name": "wherehouses", "followers": 2, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616100005174f72d7f58341f60c73a1465cd", "match": "name-search", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "Charleston, South Carolina", "musicbrainz_url": "https://musicbrainz.org/artist/2977d0d1-40e9-4d83-8735-efb53acf6c90"}, {"name": "DJ FLIP", "spotify_url": "https://open.spotify.com/artist/3sdk4DKUJHfJuDXjWLLO2W", "spotify_id": "3sdk4DKUJHfJuDXjWLLO2W", "spotify_name": "DJ Flip", "followers": 1, "popularity": 3, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "Charleston, SC DJ", "musicbrainz_url": "https://musicbrainz.org/artist/2849f4e6-a560-45f9-8916-3dcc21552f52"}, {"name": "Urylee Leonardos", "spotify_url": "https://open.spotify.com/artist/2nGna1ZbkeTvJ5PuGissGO", "spotify_id": "2nGna1ZbkeTvJ5PuGissGO", "spotify_name": "Urylee Leonardos", "followers": 1, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1910-05-14", "end_date": "1986-04-25", "disambiguation": "American soprano and actress", "musicbrainz_url": "https://musicbrainz.org/artist/b3ac839a-2cf8-4200-bcca-5f750448542f"}, {"name": "Anne Holmi", "spotify_url": "https://open.spotify.com/artist/0tuieTu4Rc2wTGtIqUzIsp", "spotify_id": "0tuieTu4Rc2wTGtIqUzIsp", "spotify_name": "Anne Holmi", "followers": 0, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/808e1ad0-6c88-4d5e-af4e-137f25de5006"}, {"name": "Beth Albert", "spotify_url": "https://open.spotify.com/artist/1UrPkDUZBWrgx75ppA58t6", "spotify_id": "1UrPkDUZBWrgx75ppA58t6", "spotify_name": "Beth Albert", "followers": 0, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/d9d41162-ed3c-4d9c-9712-8e8d4543e745"}, {"name": "Bud Collins", "spotify_url": "https://open.spotify.com/artist/5uJgARF1r1Ffsk2pEcEQIH", "spotify_id": "5uJgARF1r1Ffsk2pEcEQIH", "spotify_name": "Bud Collins", "followers": 0, "popularity": 0, "genres": "", "image_url": "https://i.scdn.co/image/ab67616d00001e02a6304a6ece0a1ea434c55ced", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/2f5349ea-b712-4870-99fb-85cdfcbb4933"}, {"name": "Iris Bell", "spotify_url": "https://open.spotify.com/artist/5lfuICbdIx8aS6NQGao3rU", "spotify_id": "5lfuICbdIx8aS6NQGao3rU", "spotify_name": "Iris Bell", "followers": 0, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1934", "end_date": "2008-04-19", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/cb5377d8-57f8-4bc6-80d5-ac52eefcc057"}, {"name": "Matt Tuton", "spotify_url": "https://open.spotify.com/artist/6rlXaPggPgVkrXq4HTwe78", "spotify_id": "6rlXaPggPgVkrXq4HTwe78", "spotify_name": "Matt Tuton", "followers": 0, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/42cd61b1-c148-41e0-80ac-0ca304935fea"}, {"name": "Susan Messersmith", "spotify_url": "https://open.spotify.com/artist/3Iisu9gZatEh6kaVpg3BOQ", "spotify_id": "3Iisu9gZatEh6kaVpg3BOQ", "spotify_name": "Susan Messersmith", "followers": 0, "popularity": 0, "genres": "", "image_url": "", "match": "name-search", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/c0f03c0b-4d69-429f-95f2-d3efd110709f"}, {"name": "...Galloway...", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "1993", "end_date": "2003", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/5a4a6bea-8d9b-447e-9337-5fa951e48d0c"}, {"name": "Andy Kubiszewski", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1961-09-30", "end_date": "", "disambiguation": "American musician and producer", "musicbrainz_url": "https://musicbrainz.org/artist/0057fb33-1ad1-4b96-86ad-94984b2243d0"}, {"name": "Annalise Morelli", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1996-08-28", "end_date": "", "disambiguation": "aka Elli Moore", "musicbrainz_url": "https://musicbrainz.org/artist/bc476266-1fba-44de-88b6-cc8ec4a0dd17"}, {"name": "Areou", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/bfeb601a-20d1-4644-87f7-105d7994c418"}, {"name": "Ataxon", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/94897078-bb3b-42a0-a5d7-27c708836977"}, {"name": "Beau Billingslea", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "", "begin_area": "Charleston", "begin_date": "1944-12-18", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/7733d6e1-1ec9-4905-9165-adc18ecd0f0f"}, {"name": "Bertha \u201cChippie\u201d Hill", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1905-03-15", "end_date": "1950-05-07", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/9a0bc465-9174-432d-a85d-54c8dec8a93c"}, {"name": "Buried In Terror", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/4a895279-7553-4e0f-8618-eaecc8d3034f"}, {"name": "C H O Y C E", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "christian rapper", "musicbrainz_url": "https://musicbrainz.org/artist/8b975b16-ba11-4a43-8d07-6f9f40f4870f"}, {"name": "Cameron Wescott", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/ead8c11a-6414-424d-adcc-f0a86545f67d"}, {"name": "Cathedral Worship Arts", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "", "begin_area": "North Charleston", "begin_date": "1987", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/24fd3ef7-5725-446c-92c1-9d02171d97c8"}, {"name": "Cavalier in Clay", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/1a598774-4d89-4789-9e0a-2b9336d41677"}, {"name": "Childrens Choir", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "metal band from Charleston, SC", "musicbrainz_url": "https://musicbrainz.org/artist/eb4e9efa-9162-442e-a771-cfbd2f24f531"}, {"name": "Cletus", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "United States", "begin_area": "Seabrook Island", "begin_date": "1994", "end_date": "", "disambiguation": "1990s punk band", "musicbrainz_url": "https://musicbrainz.org/artist/3be2f1f7-fad9-4610-8417-cbf89234f3af"}, {"name": "Colombian Neckties", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "1980s punk band from South Carolina", "musicbrainz_url": "https://musicbrainz.org/artist/5ee2b910-63a4-4edf-93d3-35458662d5e7"}, {"name": "Company", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "gospel singers", "musicbrainz_url": "https://musicbrainz.org/artist/e625acb1-d618-4e38-ab46-307eb844a513"}, {"name": "Copacetic Fetish", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/1b0193f5-5406-45df-b633-c18b2c2268e0"}, {"name": "Da Phlayva", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/0b515bd8-71e6-4607-be37-1a7435ac1eea"}, {"name": "Dalonta\u00e9 Davis", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Mableton", "begin_area": "Charleston", "begin_date": "1993-12-09", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b1f9b036-81d9-49ed-9ab7-c452f0a37396"}, {"name": "Daniel D.", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1989-02-22", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/896d1a12-9ec9-4f3c-903a-8f16766cfb3a"}, {"name": "Disenthralled", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/78d60496-706b-497f-b8a9-f788335355ee"}, {"name": "DJ Cannonball Kev", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "DJ Persona of Kevin Shields", "musicbrainz_url": "https://musicbrainz.org/artist/5bf95307-1cf2-45c6-ad76-e937a9445840"}, {"name": "DJ Nor_Way", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "North Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/58bb460b-7ac1-4262-86ac-15cbbb01b200"}, {"name": "djretard", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2007-09-05", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/bf7d2e1c-6a7e-4f87-a20c-61b72911744f"}, {"name": "Dub Island Soundsystem", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b65ee356-f1d0-4047-8c36-e727b0ea068a"}, {"name": "Emilie Hammarskj\u00f6ld", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Sweden", "begin_area": "Stockholm", "begin_date": "1821-05-06", "end_date": "1854-03-26", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/4eb9a148-5f26-4b40-ab5e-85885aa1108e"}, {"name": "Epidomic Sadomism", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/99f7159f-4311-4242-b140-83a2da9436e2"}, {"name": "Eurich", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "North Charleston", "begin_area": "", "begin_date": "1994", "end_date": "1997", "disambiguation": "American emo-hardcore band", "musicbrainz_url": "https://musicbrainz.org/artist/2d544276-d30f-4392-a269-8e6b0ec6213b"}, {"name": "Firework Show", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2005", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b0a4a181-3b42-49e6-8ba9-fc9d522141fc"}, {"name": "Fontaine Weyman", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "Aix-en-Provence", "begin_date": "1979-05-07", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b8412da2-b6f6-4980-9ebe-bdd1d4c9d1a9"}, {"name": "Gene Mikell", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1885-03-17", "end_date": "1932-01-19", "disambiguation": "Francis Eugene Mikell, Sr.", "musicbrainz_url": "https://musicbrainz.org/artist/56b0dd73-36f6-43ad-83ad-619bd5fa9dc2"}, {"name": "Genius Productions", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "1989", "end_date": "", "disambiguation": "Matt Jones et al.", "musicbrainz_url": "https://musicbrainz.org/artist/e4fe3a2b-04d1-4be4-91fe-986895c7298e"}, {"name": "Glass Lashes", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "North Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/bf7c6da0-1790-4af4-974b-2a1af3a73f55"}, {"name": "Glitch Nix", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Hollywood", "begin_area": "Philadelphia", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/8d528063-817a-4cae-9586-ea8358ac4780"}, {"name": "Grace Church Congregation", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/cee8ee4b-d1b9-4106-a942-5717574b017f"}, {"name": "Gus Aiken", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1902-07-26", "end_date": "1973-04-01", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/663c55ec-509e-4499-95ad-8cf087a73102"}, {"name": "Hal Jackson", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1915-11-13", "end_date": "2012-05-23", "disambiguation": "broadcaster", "musicbrainz_url": "https://musicbrainz.org/artist/889d87a5-7dc2-4df8-8ca9-48d96fb19ce8"}, {"name": "Half Strangers", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/9a9de278-ba67-47fc-be9d-7fa8f07554f8"}, {"name": "Henry Wellington Greatorex", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Burton upon Trent", "begin_date": "1816", "end_date": "1858-09", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/5c27a541-998f-4343-8c6c-23c1d062892e"}, {"name": "Hoss", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "1995", "end_date": "2001", "disambiguation": "stoner rock/doom band from Charleston, South Carolina", "musicbrainz_url": "https://musicbrainz.org/artist/f7802cdf-11d9-4fd3-becd-b988d1e296fa"}, {"name": "H\u2010Bomb Ferguson", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1929-05-09", "end_date": "2006-11-26", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/c588f608-2343-4562-b6c1-92a9dce4bbc5"}, {"name": "Infinity tha Ghetto Child", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "South Carolina", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/589f2752-54cf-43b3-992e-191e4c996874"}, {"name": "James F. Byrnes", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1882-05-02", "end_date": "1972-04-09", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/6513d72f-974e-40c5-b43a-3edec4d3baf0"}, {"name": "Jamie McAlister", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/fadce6d2-d5e9-423e-8feb-475516a08c38"}, {"name": "Jared Sinclair", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "flutist", "musicbrainz_url": "https://musicbrainz.org/artist/5da1ec07-d2d2-4bb2-b71c-bbe8a7087893"}, {"name": "Jay Moth", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/46376688-b96d-41a3-b5b1-f6179af6d4ce"}, {"name": "Jeanette Salvant", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Pass Christian", "begin_date": "1906-12-18", "end_date": "2001-03-28", "disambiguation": "American jazz pianist", "musicbrainz_url": "https://musicbrainz.org/artist/5f19f9ac-0f57-450a-9eaf-ea955f7b1574"}, {"name": "Jerks!", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/df9f9df4-f491-4596-9a3e-7d4d4016c772"}, {"name": "Jessica Hische", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1984-04-04", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/712ba626-e24c-40bc-82d5-580c5af6e123"}, {"name": "Kapone", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2002", "end_date": "", "disambiguation": "Alternative Rock Band from South Carolina", "musicbrainz_url": "https://musicbrainz.org/artist/3ce2d1a1-3818-43f6-b5c5-437158fd32f1"}, {"name": "Ken Mullin", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Mount Pleasant", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "trumpeter", "musicbrainz_url": "https://musicbrainz.org/artist/af92dca4-903b-457b-80a2-4338001ca433"}, {"name": "Keri Pickett", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Minneapolis", "begin_area": "Charleston", "begin_date": "1959", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/41cbbda9-06d8-4184-bdab-b45fe4bb9f06"}, {"name": "KingSpartaX37", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Hollywood", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/580855d5-ac0b-48dd-ba7a-01736ec3d9ee"}, {"name": "Kudzu Kin", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/4936f4ac-19a8-4373-9f92-abd2090b203e"}, {"name": "Lark", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "song \"Clouded Mind\", from Charleston, SC", "musicbrainz_url": "https://musicbrainz.org/artist/1bd3ad24-cf0c-423f-a806-f8f0163a3b34"}, {"name": "Marie Siegling", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1824-02-07", "end_date": "1920-01-02", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/114f8afb-46b7-419a-aa40-79813a3b3b24"}, {"name": "Marshgrass Mamas", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "", "begin_area": "Johns Island", "begin_date": "2001", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/a01504ab-bef4-404e-b606-63a54d98a313"}, {"name": "Matt Zutell", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/eac48fbe-2127-4101-afce-9d08ca8a0d32"}, {"name": "NMC Chamber Ensemble", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/ec615dec-31d7-42a5-b993-fae151887cf3"}, {"name": "Paul Root Wolpe", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1957-02-26", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/22c8ef79-04b0-443e-95f7-3d68c1d91b1e"}, {"name": "Pete Briggs", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1904", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b46e6ef5-0620-44a0-88e2-a2badb2ab203"}, {"name": "R3x0R", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "1998", "end_date": "", "disambiguation": "rex - or", "musicbrainz_url": "https://musicbrainz.org/artist/b0905554-88ae-4318-8737-474536ec8472"}, {"name": "Rabbi Avraham Yaakov Gillman", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Salakas", "begin_date": "1860", "end_date": "1931-01-08", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/aece6eb5-c49a-422d-8f4a-2488055f4f0e"}, {"name": "Ronnie Free", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1936-01-15", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/328c3ec1-8dc1-4a68-b37f-91cec1148860"}, {"name": "Ryan Bresnihan", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/735fada1-5bab-4cff-9db3-c056a783c42f"}, {"name": "Safety 3rd", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "", "begin_area": "Charleston", "begin_date": "2018", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/d5e83c55-c2f9-4ef2-855e-f40563939a98"}, {"name": "Sam Sfirri", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "Pennsylvania", "begin_date": "1987", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/17b422c7-77f1-4f13-8aec-7f66e2e4bc7b"}, {"name": "Sear", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "screamo band from South Carolina, USA", "musicbrainz_url": "https://musicbrainz.org/artist/b4c9dbf3-f33a-4ff3-8d69-b1af441fc30c"}, {"name": "Sit At My Right Hand", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "", "area": "", "begin_area": "Charleston", "begin_date": "2008", "end_date": "", "disambiguation": "Christian Death Metal/Grindcore", "musicbrainz_url": "https://musicbrainz.org/artist/54372a54-fb44-4531-a549-ce511d964cc2"}, {"name": "Snow Fisher", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "1890-11-11", "end_date": "1938-01-08", "disambiguation": "US born dancer,singer and drummer active beginning of the 1900s", "musicbrainz_url": "https://musicbrainz.org/artist/b0d6f128-139d-4a04-b1f6-4a84b59e9254"}, {"name": "Stereoshores", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "Charleston", "begin_date": "2014", "end_date": "2015", "disambiguation": "Two piece indie band", "musicbrainz_url": "https://musicbrainz.org/artist/3fcd1d06-ea14-4788-a818-46f014148970"}, {"name": "The Gutter Saints", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/179668e1-c4a3-445d-8c7f-c07a25b4b51f"}, {"name": "The Moon", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "United States", "begin_area": "Hollywood", "begin_date": "1967", "end_date": "1969", "disambiguation": "60s psychedelic rock US band", "musicbrainz_url": "https://musicbrainz.org/artist/5ef097a9-f132-4acf-904c-240cb30d3db6"}, {"name": "The Plainfield Project", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "United States", "begin_area": "Charleston", "begin_date": "2006", "end_date": "2010", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/f557774e-d766-4b10-b721-71d843435880"}, {"name": "The Royal Tinfoil", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Group", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/81675998-26b1-4ca9-a8e3-05cf278231f7"}, {"name": "Timothy James Robinson", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "Charleston", "begin_date": "", "end_date": "", "disambiguation": "trombonist", "musicbrainz_url": "https://musicbrainz.org/artist/4f263355-2833-4612-bf62-40feecd98b09"}, {"name": "Tyler Sim", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/b87177ee-b8c1-4d0f-98d4-6b46e5f66b95"}, {"name": "Wondress Hutchinson", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "Person", "area": "United States", "begin_area": "", "begin_date": "1964-06-20", "end_date": "2021-05-01", "disambiguation": "American electronic dance/jazz fusion singer, vocalist with Mantronix as \"Wondress\"", "musicbrainz_url": "https://musicbrainz.org/artist/3e460a5d-b2c7-4656-9aa7-8a6df95848ca"}, {"name": "Wormbelly", "spotify_url": "", "spotify_id": "", "spotify_name": "", "followers": "", "popularity": "", "genres": "", "image_url": "", "match": "none", "type": "", "area": "Charleston", "begin_area": "", "begin_date": "", "end_date": "", "disambiguation": "", "musicbrainz_url": "https://musicbrainz.org/artist/d99ac7de-b843-4083-aa00-862e84c58a6e"}], "updated_at": 1790962575.0704284, "has_credentials": false, "status": {"running": false}};</script>
+<script>
+  const MATCH = {
+    "mb-link": { label: "Linked", cls: "m-linked", order: 0 },
+    "name-search": { label: "Name match", cls: "m-name", order: 1 },
+    "none": { label: "Not on Spotify", cls: "m-none", order: 2 },
+    "error": { label: "Lookup failed", cls: "m-error", order: 3 },
+  };
+  const TINTS = ["--pink", "--butter", "--mint", "--sky", "--lilac", "--coral", "--sand"];
+  const SORTS = {
+    match: (a, b) => MATCH[a.match].order - MATCH[b.match].order || (b.followers ?? -1) - (a.followers ?? -1),
+    name: (a, b) => a.name.localeCompare(b.name),
+    followers: (a, b) => (a.followers ?? -1) - (b.followers ?? -1),
+    popularity: (a, b) => (a.popularity ?? -1) - (b.popularity ?? -1),
+  };
+  const LIFESPAN = { Person: ["Born", "Died"], Group: ["Formed", "Disbanded"], other: ["Began", "Ended"] };
+  const DEFAULT_DIR = { match: 1, name: 1, followers: -1, popularity: -1 };
+  const compact = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
+
+  const state = {
+    artists: [],
+    updatedAt: null,
+    hasCredentials: true,
+    isStatic: false,
+    query: "",
+    match: "all",
+    type: "all",
+    sort: "match",
+    dir: 1,
+    selectedKey: null,
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const els = {
+    list: $("list"), panel: $("panel"), count: $("count"), search: $("search"),
+    typeFilter: $("type-filter"), refresh: $("refresh"), notice: $("notice"),
+    progress: $("progress"), progressText: $("progress-text"),
+    progressTrack: $("progress-track"), progressBar: $("progress-bar"),
+  };
+
+  function el(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(attrs)) {
+      if (value == null || value === false) continue;
+      if (key === "class") node.className = value;
+      else if (key === "style") node.style.cssText = value;
+      else if (key.startsWith("on")) node.addEventListener(key.slice(2), value);
+      else node.setAttribute(key, value === true ? "" : value);
+    }
+    for (const child of children.flat()) {
+      if (child != null && child !== false) node.append(child);
+    }
+    return node;
+  }
+
+  const safeUrl = (url) => (typeof url === "string" && url.startsWith("https://") ? url : null);
+  const toNumber = (v) => (v === "" || v == null ? null : Number(v));
+
+  function tintFor(name) {
+    let hash = 0;
+    for (const ch of name) hash = (hash * 31 + ch.codePointAt(0)) >>> 0;
+    return TINTS[hash % TINTS.length];
+  }
+
+  function timeAgo(date) {
+    const seconds = (date - Date.now()) / 1000;
+    const units = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+    const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+    for (const [unit, size] of units) {
+      if (Math.abs(seconds) >= size) return rtf.format(Math.round(seconds / size), unit);
+    }
+    return "just now";
+  }
+
+  function locationText(a) {
+    const parts = [];
+    if (a.area) parts.push(`Based in ${a.area}`);
+    if (a.begin_area && a.begin_area !== a.area) {
+      const verb = (LIFESPAN[a.type] ?? LIFESPAN.other)[0];
+      parts.push(`${parts.length ? verb.toLowerCase() : verb} in ${a.begin_area}`);
+    }
+    return parts.join(", ");
+  }
+
+  function avatar(a, extraClass = "") {
+    const img = safeUrl(a.image_url);
+    return el("span", { class: `arch ${extraClass}`, style: `--tint: var(${tintFor(a.name)})`, "aria-hidden": "true" },
+      [...a.name.replace(/^the\s+/i, "")][0]?.toUpperCase() ?? "?",
+      img && el("img", { src: img, alt: "", loading: "lazy", onerror: (e) => e.target.remove() }));
+  }
+
+  /* ---------- Skyline ---------- */
+  function drawSkyline(svg) {
+    const NS = "http://www.w3.org/2000/svg";
+    const widths = [88, 72, 98, 66, 84, 104, 74, 92, 70, 86, 100, 78];
+    const H = 120;
+    let x = 0;
+    for (let i = 0; x < 2400; i++) {
+      const w = widths[i % widths.length];
+      const h = 64 + ((i * 29) % 50);
+      const g = document.createElementNS(NS, "g");
+      g.style.animationDelay = `${(i % 14) * 45}ms`;
+      const add = (tag, attrs) => {
+        const node = document.createElementNS(NS, tag);
+        for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+        g.append(node);
+      };
+      add("rect", { x, y: H - h, width: w, height: h, style: `fill: var(${TINTS[(i * 3) % TINTS.length]})` });
+      add("rect", { x: x - 2, y: H - h, width: w + 4, height: 6, class: "cornice" });
+      const cols = w >= 90 ? 3 : 2;
+      const floors = Math.max(1, Math.floor((h - 36) / 26));
+      const pitch = w / cols;
+      for (let f = 0; f < floors; f++) {
+        for (let c = 0; c < cols; c++) {
+          add("rect", {
+            x: x + pitch * c + pitch / 2 - 5, y: H - h + 16 + f * 26, width: 10, height: 16, rx: 1,
+            class: (i * 7 + f * 3 + c * 5) % 6 === 0 ? "window lit" : "window",
+          });
+        }
+      }
+      const doorX = x + (i % 2 ? w * 0.68 : w * 0.2);
+      add("path", { d: `M${doorX} ${H} v-16 a6 6 0 0 1 12 0 v16 z`, class: "door" });
+      svg.append(g);
+      x += w;
+    }
+  }
+
+  /* ---------- Data ---------- */
+  async function loadArtists() {
+    const data = window.STATIC_DATA ?? await (await fetch("/api/artists")).json();
+    state.isStatic = Boolean(data.static);
+    state.hasCredentials = data.has_credentials;
+    els.refresh.hidden = state.isStatic;
+    state.updatedAt = data.updated_at ? new Date(data.updated_at * 1000) : null;
+    state.artists = data.artists.map((a) => ({
+      ...a,
+      key: a.musicbrainz_url,
+      followers: toNumber(a.followers),
+      popularity: toNumber(a.popularity),
+      genreList: a.genres ? a.genres.split("; ").filter(Boolean) : [],
+    }));
+    if (!state.artists.some((a) => a.key === state.selectedKey)) state.selectedKey = null;
+    renderTypeOptions();
+    renderStats();
+    renderList();
+    renderPanel();
+    renderStatus(data.status);
+    const failed = state.artists.filter((a) => a.match === "error").length;
+    if (failed && !data.status.error && !state.isStatic) {
+      showNotice(`${failed} Spotify ${failed === 1 ? "lookup" : "lookups"} failed. Refresh again to retry.`);
+    }
+    if (data.status.running) startPolling();
+  }
+
+  async function refresh() {
+    els.notice.hidden = true;
+    try {
+      const res = await fetch("/api/refresh", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" });
+      renderStatus(await res.json());
+      startPolling();
+    } catch {
+      showNotice("Couldn't reach the server. Is web.py still running?");
+    }
+  }
+
+  let pollTimer = null;
+  function startPolling() {
+    if (pollTimer) return;
+    pollTimer = setInterval(async () => {
+      try {
+        const status = await (await fetch("/api/status")).json();
+        renderStatus(status);
+        if (!status.running) {
+          stopPolling();
+          if (!status.error) {
+            els.list.classList.add("intro");
+            await loadArtists();
+          }
+        }
+      } catch {
+        stopPolling();
+        showNotice("Lost connection to the server.");
+        renderStatus({ running: false });
+      }
+    }, 700);
+  }
+  function stopPolling() {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+
+  /* ---------- Rendering ---------- */
+  function showNotice(message) {
+    els.notice.textContent = message;
+    els.notice.hidden = false;
+  }
+
+  function renderStatus(status) {
+    const running = Boolean(status.running);
+    els.refresh.disabled = running || !state.hasCredentials;
+    els.refresh.classList.toggle("busy", running);
+    els.refresh.querySelector("span").textContent = running ? "Refreshing…" : "Refresh data";
+    els.progress.hidden = !running;
+    if (running) {
+      const counting = status.phase === "spotify" && status.total > 0;
+      els.progressTrack.classList.toggle("indeterminate", !counting);
+      els.progressBar.style.width = counting ? `${(status.done / status.total) * 100}%` : "";
+      els.progressText.textContent = counting
+        ? `Matching on Spotify · ${status.done} of ${status.total}`
+        : "Finding Charleston artists on MusicBrainz…";
+    }
+    if (status.error) showNotice(status.error);
+    else if (!state.hasCredentials && !state.isStatic) {
+      els.notice.replaceChildren("Set ", el("code", {}, "SPOTIFY_CLIENT_ID"), " and ",
+        el("code", {}, "SPOTIFY_CLIENT_SECRET"), ", then restart web.py to refresh.");
+      els.notice.hidden = false;
+    }
+  }
+
+  function renderStats() {
+    const onSpotify = state.artists.filter((a) => a.spotify_id).length;
+    $("stat-total").textContent = state.artists.length || "—";
+    $("stat-spotify").textContent = state.artists.length ? onSpotify : "—";
+    const updated = $("stat-updated");
+    updated.textContent = state.updatedAt ? timeAgo(state.updatedAt) : "never";
+    updated.title = state.updatedAt ? state.updatedAt.toLocaleString() : "";
+  }
+
+  function renderTypeOptions() {
+    const types = [...new Set(state.artists.map((a) => a.type || "Unknown"))].sort();
+    if (!types.includes(state.type)) state.type = "all";
+    els.typeFilter.replaceChildren(
+      el("option", { value: "all" }, "All types"),
+      ...types.map((t) => el("option", { value: t }, t)));
+    els.typeFilter.value = state.type;
+  }
+
+  function visibleArtists() {
+    const q = state.query.trim().toLowerCase();
+    return state.artists
+      .filter((a) => state.match === "all" || a.match === state.match)
+      .filter((a) => state.type === "all" || (a.type || "Unknown") === state.type)
+      .filter((a) => !q || [a.name, a.genres, a.area, a.begin_area, a.disambiguation].join(" ").toLowerCase().includes(q))
+      .sort((a, b) => SORTS[state.sort](a, b) * state.dir || a.name.localeCompare(b.name));
+  }
+
+  function artistRow(a, i) {
+    const m = MATCH[a.match];
+    const meta = [a.type, locationText(a)].filter(Boolean).join(" · ");
+    return el("button", {
+        class: `row ${m.cls}`, type: "button", style: `--i: ${Math.min(i, 24)}`,
+        "aria-current": a.key === state.selectedKey ? "true" : null,
+        "data-key": a.key, onclick: () => select(a.key),
+      },
+      avatar(a),
+      el("span", { class: "main" },
+        el("span", { class: "name" }, a.name),
+        meta && el("span", { class: "meta" }, meta),
+        a.genreList.length > 0 && el("span", { class: "genres" }, a.genreList.slice(0, 3).join(" · "))),
+      a.followers == null
+        ? el("span", { class: "followers no-data" }, "—")
+        : el("span", { class: "followers", title: `${a.followers.toLocaleString()} followers` }, compact.format(a.followers)),
+      el("span", { class: "pop" },
+        a.popularity == null ? "—" : [el("span", { class: "track" }, el("span", { style: `width: ${a.popularity}%` })), String(a.popularity)]),
+      el("span", { class: `badge ${m.cls}` }, m.label));
+  }
+
+  function renderList() {
+    const rows = visibleArtists();
+    els.count.textContent = state.artists.length ? `${rows.length} of ${state.artists.length}` : "";
+
+    for (const btn of document.querySelectorAll(".sort")) {
+      const active = btn.dataset.sort === state.sort;
+      btn.classList.toggle("active", active);
+      btn.querySelector(".arrow").textContent = state.dir > 0 ? "▲" : "▼";
+      btn.parentElement.setAttribute("aria-sort", active ? (state.dir > 0 ? "ascending" : "descending") : "none");
+    }
+
+    if (!state.artists.length) {
+      els.list.replaceChildren(el("div", { class: "empty" },
+        el("h2", {}, "No artists yet"),
+        state.hasCredentials
+          ? el("p", {}, "Refresh to pull Charleston artists from MusicBrainz and match them on Spotify. Takes a minute or two.")
+          : el("p", {}, "Set ", el("code", {}, "SPOTIFY_CLIENT_ID"), " and ", el("code", {}, "SPOTIFY_CLIENT_SECRET"),
+              " (from developer.spotify.com/dashboard), restart ", el("code", {}, "web.py"), ", then refresh.")));
+      return;
+    }
+    if (!rows.length) {
+      els.list.replaceChildren(el("div", { class: "empty" },
+        el("h2", {}, "Nobody here"),
+        el("p", {}, "No artists match these filters."),
+        el("button", { class: "link-button", type: "button", onclick: clearFilters }, "Clear filters")));
+      return;
+    }
+    els.list.replaceChildren(...rows.map(artistRow));
+    setTimeout(() => els.list.classList.remove("intro"), 1200);
+  }
+
+  function renderPanel() {
+    const a = state.artists.find((x) => x.key === state.selectedKey);
+    document.body.classList.toggle("panel-open", Boolean(a));
+    if (!a) {
+      els.panel.replaceChildren(el("div", { class: "placeholder-wrap" }, el("div", { class: "placeholder" }, houseDrawing(),
+        el("h2", {}, "Pick an artist"),
+        el("p", {}, "See where they're from and listen right here."))));
+      return;
+    }
+    const m = MATCH[a.match];
+    const spotifyUrl = safeUrl(a.spotify_url);
+    const [began, ended] = LIFESPAN[a.type] ?? LIFESPAN.other;
+    const facts = [
+      ["Based in", a.area],
+      [`${began} in`, a.begin_area],
+      ["Type", a.type],
+      [began, a.begin_date],
+      [ended, a.end_date],
+      ["Followers", a.followers?.toLocaleString()],
+      ["Popularity", a.popularity == null ? null : `${a.popularity} / 100`],
+    ].filter(([, v]) => v);
+
+    els.panel.replaceChildren(
+      el("button", { class: "close", type: "button", "aria-label": "Close details", onclick: () => select(null) },
+        svgIcon("M6 6l12 12M18 6L6 18")),
+      el("div", { class: "panel-inner" },
+        avatar(a, "hero"),
+        el("div", { class: "panel-head" },
+          el("span", { class: `badge ${m.cls}` }, m.label),
+          el("h2", {}, a.name),
+          a.disambiguation && el("p", { class: "dis" }, a.disambiguation)),
+        facts.length > 0 && el("dl", { class: "facts" }, facts.map(([k, v]) => el("div", {}, el("dt", {}, k), el("dd", {}, v)))),
+        a.genreList.length > 0 && el("div", { class: "chips" }, a.genreList.map((g) => el("span", { class: "chip" }, g))),
+        a.match === "name-search" && el("p", { class: "callout" },
+          "Matched by name only. Check this is the right artist",
+          a.spotify_name && a.spotify_name !== a.name ? ` (Spotify lists them as “${a.spotify_name}”)` : "", "."),
+        a.match === "none" && el("p", { class: "callout" }, "No Spotify profile found for this artist."),
+        a.match === "error" && el("p", { class: "callout" }, "Spotify lookup failed during the last refresh. Refresh again to retry."),
+        el("div", { class: "actions" },
+          spotifyUrl && el("a", { class: "btn primary", href: spotifyUrl, target: "_blank", rel: "noopener" },
+            "Open in Spotify", svgIcon("M7 17 17 7M9 7h8v8")),
+          safeUrl(a.musicbrainz_url) && el("a", { class: "btn", href: a.musicbrainz_url, target: "_blank", rel: "noopener" }, "MusicBrainz")),
+        a.spotify_id && el("iframe", {
+          class: "embed",
+          title: `${a.name} on Spotify`,
+          src: `https://open.spotify.com/embed/artist/${encodeURIComponent(a.spotify_id)}?utm_source=generator`,
+          loading: "lazy",
+          allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
+        })));
+    els.panel.scrollTop = 0;
+  }
+
+  function svgIcon(d) {
+    const NS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2.2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("aria-hidden", "true");
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", d);
+    svg.append(path);
+    return svg;
+  }
+
+  function houseDrawing() {
+    const wrap = el("div");
+    wrap.innerHTML = `<svg viewBox="0 0 120 130" aria-hidden="true">
+      <rect x="14" y="20" width="92" height="110" style="fill: var(--butter)"/>
+      <rect x="10" y="16" width="100" height="8" style="fill: var(--cornice)"/>
+      <rect x="28" y="38" width="16" height="24" rx="2" style="fill: var(--window-lit)"/>
+      <rect x="52" y="38" width="16" height="24" rx="2" style="fill: var(--window)"/>
+      <rect x="76" y="38" width="16" height="24" rx="2" style="fill: var(--window)"/>
+      <rect x="28" y="74" width="16" height="24" rx="2" style="fill: var(--window)"/>
+      <rect x="76" y="74" width="16" height="24" rx="2" style="fill: var(--window-lit)"/>
+      <path d="M50 130 v-24 a10 10 0 0 1 20 0 v24 z" style="fill: var(--door)"/>
+    </svg>`;
+    return wrap.firstElementChild;
+  }
+
+  /* ---------- Interaction ---------- */
+  function select(key) {
+    const previous = state.selectedKey;
+    state.selectedKey = key;
+    for (const row of els.list.querySelectorAll(".row")) {
+      if (row.dataset.key === key) row.setAttribute("aria-current", "true");
+      else row.removeAttribute("aria-current");
+    }
+    renderPanel();
+    if (!key && previous) els.list.querySelector(`[data-key="${CSS.escape(previous)}"]`)?.focus();
+  }
+
+  function clearFilters() {
+    state.query = "";
+    state.match = "all";
+    state.type = "all";
+    els.search.value = "";
+    els.typeFilter.value = "all";
+    syncMatchButtons();
+    renderList();
+  }
+
+  function syncMatchButtons() {
+    for (const btn of document.querySelectorAll("#match-filter button")) {
+      btn.setAttribute("aria-pressed", String(btn.dataset.match === state.match));
+    }
+  }
+
+  els.search.addEventListener("input", (e) => { state.query = e.target.value; renderList(); });
+  els.typeFilter.addEventListener("change", (e) => { state.type = e.target.value; renderList(); });
+  $("match-filter").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-match]");
+    if (!btn) return;
+    state.match = btn.dataset.match;
+    syncMatchButtons();
+    renderList();
+  });
+  $("cols").addEventListener("click", (e) => {
+    const btn = e.target.closest(".sort");
+    if (!btn) return;
+    const key = btn.dataset.sort;
+    if (state.sort === key) state.dir *= -1;
+    else { state.sort = key; state.dir = DEFAULT_DIR[key]; }
+    renderList();
+  });
+  els.refresh.addEventListener("click", refresh);
+  $("backdrop").addEventListener("click", () => select(null));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && state.selectedKey) select(null);
+    if (e.key === "/" && document.activeElement !== els.search && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault();
+      els.search.focus();
+    }
+  });
+  new ResizeObserver(([entry]) => {
+    document.documentElement.style.setProperty("--toolbar-h", `${entry.target.offsetHeight}px`);
+  }).observe($("toolbar"));
+
+  drawSkyline($("skyline"));
+  loadArtists().catch(() => showNotice("Couldn't load artists from the server."));
+</script>
+</body>
+</html>
